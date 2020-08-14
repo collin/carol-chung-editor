@@ -3,7 +3,6 @@ main {
   display: flex;
   flex-flow: row wrap;
   justify-content: center;
-
 }
 
 canvas {
@@ -19,6 +18,10 @@ canvas {
 
 .editor-container {
   padding: 0 12px;
+  height: 500px;
+  /* display: flex;
+  flex-flow: column wrap; */
+  overflow-y: auto;
 }
 
 .circle-editor-container,

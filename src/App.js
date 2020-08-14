@@ -9,21 +9,20 @@ const defaultCircle = {
   type: 'circle',
   x: 250,
   y: 250,
-  radius: 25,
+  radius: 50,
   color: '#000000'
 };
 //id matters for delete
 const defaultRectangle = {
   type: 'rectangle',
-  x: 250,
-  y: 250,
-  width: 75,
+  x: 215,
+  y: 225,
+  width: 70,
   height: 50,
   color: '#000000'
 }
 
 class App extends React.Component {
-//function App() {
   constructor(props) {
     super(props);
     this.state = {
@@ -33,9 +32,6 @@ class App extends React.Component {
     };
     this.myRef = React.createRef();
   }
-  // const [shapes, setShapes] = useState([]);
-  // const [highlightedShapes, setHighlightedShapes] = useState([]);
-  // const [selectedShapes, setSelectedShapes] = useState([]);
 
   // EVENT HANDLERS
   clickButtonHandler = (ev) => {
@@ -90,7 +86,10 @@ class App extends React.Component {
     let canvas = this.myRef.current;
     if (canvas.getContext) {
       var ctx = canvas.getContext('2d');
-      console.log('gets here circle')
+      ctx.beginPath();
+      ctx.arc(shape.x, shape.y, shape.radius, 0, (2 * Math.PI), 0);
+      ctx.fillStyle = shape.color;
+      ctx.fill();
       // drawing code here
     } else {
       // canvas-unsupported code here

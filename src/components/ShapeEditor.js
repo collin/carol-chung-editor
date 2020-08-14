@@ -42,11 +42,11 @@ function RectangleEditor(props) {
       </div>
       <div className="row">
         <p>x position:</p>
-        <p>250</p>
+        <p>215</p>
       </div>
       <div className="row">
         <p>y position:</p>
-        <p>250</p>
+        <p>225</p>
       </div>
       <form>
         <div className="row">
@@ -70,9 +70,8 @@ function ShapeEditor(props) {
   const {clickHandler} = props;
   return (
     <div className="editor-container">
-      <h1>ShapeEditor</h1>
       <CircleEditor clickHandler={clickHandler}/>
-      <RectangleEditor clickHandler={clickHandler}/>
+      <RectangleEditor clickHandler={clickHandler}/> 
     </div>
   );
 }
