@@ -1,4 +1,5 @@
 import React, {useState, useEffect} from 'react';
+import { v4 as uuidv4 } from 'uuid';
 import './App.css';
 import Buttons from './components/Buttons';
 import ShapeEditor from './components/ShapeEditor';
@@ -21,55 +22,115 @@ const defaultRectangle = {
   color: '#000000'
 }
 
-function App() {
-  const [shapes, setShapes] = useState({});
-  const [highlightedShapes, setHighlightedShapes] = useState([]);
-  const [selectedShapes, setSelectedShapes] = useState([]);
-  const [latestShapeId, setLatestShapeId] = useState(1);
+class App extends React.Component {
+//function App() {
+  constructor(props) {
+    super(props);
+    this.state = {
+      shapes: [],
+      highlightedShapes: [],
+      selectedShapes: []
+    };
+    this.myRef = React.createRef();
+  }
+  // const [shapes, setShapes] = useState([]);
+  // const [highlightedShapes, setHighlightedShapes] = useState([]);
+  // const [selectedShapes, setSelectedShapes] = useState([]);
 
   // EVENT HANDLERS
-  const clickButtonHandler = (ev) => {
+  clickButtonHandler = (ev) => {
     //TODO handle 4 cases
     //1 add circle, 2 add rect, 3 delete circle, 4 delete rect
     console.log('todo click button');
     console.log('label', ev.target.value)
+    const {value} = ev.target;
+    if (value === 'Add Circle') {
+      let newCircle = {...defaultCircle, id: uuidv4()};
+      this.setState((state, props) => {
+        return {shapes: state.shapes.concat([newCircle])};
+      }, () => {
+        this.buildCanvas();
+      })
+    } else if (value === 'Add Rectangle') {
+      let newRectangle = {...defaultRectangle, id: uuidv4()};
+      this.setState((state, props) => {
+        return {shapes: state.shapes.concat([newRectangle])};
+      }, () => {
+        this.buildCanvas();
+      })
+    }
   }
 
   //id matters for this one
-  const changeRangeHandler = (ev) => {
+  changeRangeHandler = (ev) => {
 
   }
 
   //id matters for this one
-  const changeColorHandler = (ev) => {
+  changeColorHandler = (ev) => {
 
   }
 
-  const buildCanvas = () => {
-
+  drawRectangle = (shape) => {
+    let canvas = this.myRef.current;
+    //const node = this.myRef.current;
+    if (canvas.getContext) {
+      var ctx = canvas.getContext('2d');
+      console.log('gets here');
+      ctx.fillStyle = shape.color;
+      ctx.fillRect(shape.x, shape.y, shape.width, shape.height);
+      // drawing code here
+    } else {
+      // canvas-unsupported code here
+      console.log('Browser does not support HTML Canvas. Sorry');
+    }    
   }
 
-  const getShapesAr = () => {
-    let shapesAr = [];
-    Object.keys(shapes).forEach(k => {
-      shapesAr.push(shapes[k]);
-    });
-    return shapesAr;
+  drawCircle = (shape) => {
+    let canvas = this.myRef.current;
+    if (canvas.getContext) {
+      var ctx = canvas.getContext('2d');
+      console.log('gets here circle')
+      // drawing code here
+    } else {
+      // canvas-unsupported code here
+    }    
   }
 
-  useEffect(() => {
-    buildCanvas();
-  }, getShapesAr());
+  buildCanvas = () => {
+    this.state.shapes.forEach(shape => {
+      if (shape.type === 'circle') {
+        this.drawCircle(shape);
+      } else if (shape.type === 'rectangle') {
+        console.log('gets here build')
+        this.drawRectangle(shape);
+      }
+    })
+  }
 
-  return (
-    <div>
-      <main>
-        <Buttons clickHandler={clickButtonHandler}></Buttons>
-        <canvas width='500' height='500' id='shape-canvas'/>
-        <ShapeEditor clickHandler={clickButtonHandler}></ShapeEditor>
-      </main>
-    </div>
-  );
+  // const getShapesAr = () => {
+  //   let shapesAr = [];
+  //   Object.keys(shapes).forEach(k => {
+  //     shapesAr.push(shapes[k]);
+  //   });
+  //   return shapesAr;
+  // }
+
+  // useEffect(() => {
+  //   buildCanvas();
+  // }, [shapes]);
+
+  render() {
+    return (
+      <div>
+        <main>
+          <Buttons clickHandler={this.clickButtonHandler}></Buttons>
+          <canvas width='500' height='500' id='shape-canvas' ref={this.myRef} />
+          <ShapeEditor clickHandler={this.clickButtonHandler}></ShapeEditor>
+        </main>
+      </div>
+    ); 
+  } 
 }
 
 export default App;
