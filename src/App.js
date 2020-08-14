@@ -10,16 +10,16 @@ const defaultCircle = {
   x: 250,
   y: 250,
   radius: 50,
-  color: '#000000'
+  color: '#044aad'
 };
 //id matters for delete
 const defaultRectangle = {
   type: 'rectangle',
-  x: 215,
-  y: 225,
-  width: 70,
-  height: 50,
-  color: '#000000'
+  x: 175,
+  y: 215,
+  width: 150,
+  height: 70,
+  color: '#ff9999'
 }
 
 class App extends React.Component {
