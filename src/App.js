@@ -23,6 +23,12 @@ function App() {
   const [selectedShapes, setSelectedShapes] = useState([]);
   const [latestShapeId, setLatestShapeId] = useState(1);
 
+  // EVENT HANDLERS
+  const clickButtonHandler = (ev) => {
+    console.log('todo click button');
+    console.log('label', ev.target.value)
+  }
+
   const buildCanvas = () => {
 
   }
@@ -42,9 +48,9 @@ function App() {
   return (
     <div>
       <main>
-        <Buttons></Buttons>
+        <Buttons clickHandler={clickButtonHandler}></Buttons>
         <canvas width='500' height='500' id='shape-canvas'/>
-        <ShapeEditor></ShapeEditor>
+        <ShapeEditor clickHandler={clickButtonHandler}></ShapeEditor>
       </main>
     </div>
   );

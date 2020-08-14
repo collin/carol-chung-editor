@@ -1,11 +1,13 @@
 import React from 'react';
+import Button from './Button';
 import '../App.css';
 
-function Buttons() {
+function Buttons(props) {
+  const {clickHandler} = props;
   return (
     <div className="button-container">
-      <button>Add Circle</button>
-      <button>Add Rectangle</button>
+      <Button label='Add Circle' clickHandler={clickHandler} />
+      <Button label='Add Rectangle' clickHandler={clickHandler} />
     </div>
   );
 }

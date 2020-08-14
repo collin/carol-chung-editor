@@ -1,11 +1,13 @@
 import React from 'react';
+import Button from './Button';
 import '../App.css';
 
-function CircleEditor() {
+function CircleEditor(props) {
+  const {clickHandler} = props;
   return (
     <div className="circle-editor-container">
       <div className="row">
-        <button>Delete</button>
+        <Button label="Delete" clickHandler={clickHandler} value="Delete Circle"/>
         <p>Circle</p>
       </div>
       <div className="row">
@@ -30,11 +32,12 @@ function CircleEditor() {
   );
 }
 
-function RectangleEditor() {
+function RectangleEditor(props) {
+  const {clickHandler} = props;
   return (
     <div className="rectangle-editor-container">
       <div className="row">
-        <button>Delete</button>
+        <Button label="Delete" clickHandler={clickHandler} value="Delete Rectangle"/>
         <p>Rectangle</p>
       </div>
       <div className="row">
@@ -63,12 +66,13 @@ function RectangleEditor() {
   );
 }
 
-function ShapeEditor() {
+function ShapeEditor(props) {
+  const {clickHandler} = props;
   return (
     <div className="editor-container">
       <h1>ShapeEditor</h1>
-      <CircleEditor />
-      <RectangleEditor />
+      <CircleEditor clickHandler={clickHandler}/>
+      <RectangleEditor clickHandler={clickHandler}/>
     </div>
   );
 }
