@@ -14,3 +14,23 @@ canvas {
   display: flex;
   flex-flow: column nowrap;
 }
+
+/* ShapeEditor */
+
+.editor-container {
+  padding: 0 12px;
+}
+
+.circle-editor-container,
+.rectangle-editor-container {
+  width: 220px;
+  border: 1px solid #cccccc;
+  margin-bottom: 18px;
+  padding: 12px;
+}
+
+.row {
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: space-between;
+}
