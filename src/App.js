@@ -81,6 +81,16 @@ class App extends React.Component {
         this.setState({shapes: newShapes}, () => {
           this.buildCanvas();
         })
+      } else {
+        let newShapes = this.state.shapes.map(shape => {
+          if (shape.id === curId) {
+            shape.isSelected = false;
+          }
+          return shape;
+        });
+        this.setState({shapes: newShapes}, () => {
+          this.buildCanvas();
+        })
       }
     })
     //check if there is a hovered shape
@@ -186,6 +196,7 @@ class App extends React.Component {
         ctx.strokeStyle = selectColor;
       } else {
         ctx.strokeStyle = clearColor;
+        ctx.lineWidth = 5;
       }
       ctx.lineWidth = 5;
       ctx.strokeRect(shape.x - highlightWidth + 2, shape.y - highlightWidth + 2, shape.width + highlightWidth + 5, shape.height + highlightWidth + 5);
