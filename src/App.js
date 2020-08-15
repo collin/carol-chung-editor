@@ -11,7 +11,8 @@ const defaultCircle = {
   y: 250,
   radius: 50,
   color: '#044aad',
-  hasHighlight: false
+  hasHighlight: false,
+  isSelected: false,
 };
 //id matters for delete
 const defaultRectangle = {
@@ -21,7 +22,8 @@ const defaultRectangle = {
   width: 150,
   height: 70,
   color: '#ff9999',
-  hasHighlight: false
+  hasHighlight: false,
+  isSelected: false,
 }
 
 const highlightColor = '#9ADAF6';
@@ -29,14 +31,6 @@ const highlightWidth = 10;
 const selectColor = '#fdd870';
 const selectWidth = 5;
 const clearColor = '#ffffff';
-
-// const highlightRectangle = {
-//   type: 'highlight-rectangle',
-// }
-
-// const highlightCircle = {
-//   type: 'highlight-circle',
-// }
 
 class App extends React.Component {
   constructor(props) {
@@ -112,16 +106,36 @@ class App extends React.Component {
           })
         }
       } else if (shape.type === 'circle') {
-        console.log('TODO')
-        // if (this.isMouseOverCircle(mouseX, mouseY, shape)) {
-        //   this.setState((state, props) => {
-        //     return {highlightedShapes: state.highlightedShapes.concat([shape.id])}
-        //   }, () => {
-        //     //this.drawHoverHighlight(shape);
-        //   })
-        // } else {
+        if (this.isMouseOverCircle(mouseX, mouseY, shape)) {
+          let newShapes = this.state.shapes.map(shape => {
+            if (shape.id === curId) {
+              shape.hasHighlight = true;
+            }
+            return shape;
+          });
+          console.log('TODO add circle highlight')
+          //TODO is update drawCircle with conditional highlight
+          this.setState({shapes: newShapes}, () => {
+            this.buildCanvas();
+          })
+
+        } else {
         //   //if there is highlight, remove that highlight or replace it with a white highlight
-        // }
+          console.log('TODO clear circle highlight')
+          let newShapes = this.state.shapes.map(shape => {
+            if (shape.id === curId) {
+              shape.hasHighlight = false;
+            }
+            return shape;
+          });
+          console.log('TODO add circle highlight')
+          //TODO is update drawCircle with conditional highlight
+          this.setState({shapes: newShapes}, () => {
+            this.buildCanvas();
+          })
+
+
+        }
       }
     })
   }
@@ -176,7 +190,14 @@ class App extends React.Component {
       ctx.arc(shape.x, shape.y, shape.radius, 0, (2 * Math.PI), 0);
       ctx.fillStyle = shape.color;
       ctx.fill();
-      // drawing code here
+      if (shape.hasHighlight) {
+        console.log('gets here')
+        ctx.strokeStyle = highlightColor;
+      } else {
+        ctx.strokeStyle = clearColor;
+      }
+      ctx.lineWidth = 10;
+      ctx.stroke();
     } else {
       // canvas-unsupported code here
     }    
@@ -193,7 +214,11 @@ class App extends React.Component {
 
   isMouseOverCircle = (mouseX, mouseY, shape) => {
     const xCorrection = -170;
-
+    mouseX += xCorrection;
+    if (mouseX >= shape.x - shape.radius && mouseX <= shape.x + shape.radius && mouseY >= shape.y - shape.radius && mouseY <=shape.y + shape.radius) {
+      return true;
+    }
+    return false;
   }
 
   buildCanvas = () => {
