@@ -69,6 +69,20 @@ class App extends React.Component {
 
   canvasClickHandler = (ev) => {
     console.log('todo canvas click')
+    this.state.shapes.forEach(shape => {
+      let curId = shape.id;
+      if (shape.hasHighlight) {
+        let newShapes = this.state.shapes.map(shape => {
+          if (shape.id === curId) {
+            shape.isSelected = true;
+          }
+          return shape;
+        });
+        this.setState({shapes: newShapes}, () => {
+          this.buildCanvas();
+        })
+      }
+    })
     //check if there is a hovered shape
       //if yes, remove highlight stroke and draw selected stroke
       //if no, check if anything is selected and deselect those chapes
@@ -151,6 +165,9 @@ class App extends React.Component {
   }
 
   drawRectangle = (shape) => {
+    const highlightWidth = 10;
+    const selectWidth = 5;
+
     let canvas = this.myRef.current;
     if (canvas.getContext) {
       var ctx = canvas.getContext('2d');
@@ -160,11 +177,18 @@ class App extends React.Component {
       ctx.fill(rectangle);
       if (shape.hasHighlight) {
         ctx.strokeStyle = highlightColor;
-        } else {
+      } else {
         ctx.strokeStyle = clearColor;
       }
-      ctx.lineWidth = 10;
+      ctx.lineWidth = highlightWidth;
       ctx.strokeRect(shape.x, shape.y, shape.width, shape.height);
+      if (shape.isSelected) {
+        ctx.strokeStyle = selectColor;
+      } else {
+        ctx.strokeStyle = clearColor;
+      }
+      ctx.lineWidth = 5;
+      ctx.strokeRect(shape.x - highlightWidth + 2, shape.y - highlightWidth + 2, shape.width + highlightWidth + 5, shape.height + highlightWidth + 5);
     } else {
       // canvas-unsupported code here
       console.log('Browser does not support HTML Canvas. Sorry');
