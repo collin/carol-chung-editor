@@ -1,15 +1,23 @@
+* {
+  box-sizing: border-box;
+}
+
 main {
-  margin: 24px;
-  display: flex;
+  /* margin: 24px; */
+  /* display: flex;
   flex-flow: row wrap;
-  justify-content: center;
+  justify-content: center; */
 }
 
 canvas {
   border: 1px solid #cccccc;
+  position: absolute;
+  left: 170px;
+  top: 0;
 }
 
 .button-container {
+  float: left;
   display: flex;
   flex-flow: column nowrap;
 }
@@ -17,6 +25,7 @@ canvas {
 /* ShapeEditor */
 
 .editor-container {
+  float: right; 
   padding: 0 12px;
   height: 500px;
   /* display: flex;

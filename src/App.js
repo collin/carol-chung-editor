@@ -10,7 +10,8 @@ const defaultCircle = {
   x: 250,
   y: 250,
   radius: 50,
-  color: '#044aad'
+  color: '#044aad',
+  hasHighlight: false
 };
 //id matters for delete
 const defaultRectangle = {
@@ -19,8 +20,23 @@ const defaultRectangle = {
   y: 215,
   width: 150,
   height: 70,
-  color: '#ff9999'
+  color: '#ff9999',
+  hasHighlight: false
 }
+
+const highlightColor = '#9ADAF6';
+const highlightWidth = 10;
+const selectColor = '#fdd870';
+const selectWidth = 5;
+const clearColor = '#ffffff';
+
+// const highlightRectangle = {
+//   type: 'highlight-rectangle',
+// }
+
+// const highlightCircle = {
+//   type: 'highlight-circle',
+// }
 
 class App extends React.Component {
   constructor(props) {
@@ -57,6 +73,59 @@ class App extends React.Component {
     }
   }
 
+  canvasClickHandler = (ev) => {
+    console.log('todo canvas click')
+    //check if there is a hovered shape
+      //if yes, remove highlight stroke and draw selected stroke
+      //if no, check if anything is selected and deselect those chapes
+  }
+
+  canvasMouseMoveHandler = (ev) => {
+    //TODO, check if the mouse is hovering over an existing shape
+      //if yes, draw a highlight stroke around it
+    //note that canvasX is actually clientX - 170px
+    const mouseX = ev.clientX;
+    const mouseY = ev.clientY;
+
+    this.state.shapes.forEach(shape => {
+      const curId = shape.id;
+      if (shape.type === 'rectangle') {
+        if (this.isMouseOverRectangle(mouseX, mouseY, shape)) {
+          let newShapes = this.state.shapes.map(shape => {
+            if (shape.id === curId) {
+              shape.hasHighlight = true;
+            }
+            return shape;
+          });
+          this.setState({shapes: newShapes}, () => {
+            this.buildCanvas();
+          })
+        } else {
+          let newShapes = this.state.shapes.map(shape => {
+            if (shape.id === curId) {
+              shape.hasHighlight = false;
+            }
+            return shape;
+          });
+          this.setState({shapes: newShapes}, () => {
+            this.buildCanvas();
+          })
+        }
+      } else if (shape.type === 'circle') {
+        console.log('TODO')
+        // if (this.isMouseOverCircle(mouseX, mouseY, shape)) {
+        //   this.setState((state, props) => {
+        //     return {highlightedShapes: state.highlightedShapes.concat([shape.id])}
+        //   }, () => {
+        //     //this.drawHoverHighlight(shape);
+        //   })
+        // } else {
+        //   //if there is highlight, remove that highlight or replace it with a white highlight
+        // }
+      }
+    })
+  }
+
   //id matters for this one
   changeRangeHandler = (ev) => {
 
@@ -69,17 +138,34 @@ class App extends React.Component {
 
   drawRectangle = (shape) => {
     let canvas = this.myRef.current;
-    //const node = this.myRef.current;
     if (canvas.getContext) {
       var ctx = canvas.getContext('2d');
-      console.log('gets here');
+      var rectangle = new Path2D();
+      rectangle.rect(shape.x, shape.y, shape.width, shape.height);
       ctx.fillStyle = shape.color;
-      ctx.fillRect(shape.x, shape.y, shape.width, shape.height);
+      ctx.fill(rectangle);
+      if (shape.hasHighlight) {
+        ctx.strokeStyle = highlightColor;
+      } else {
+        ctx.strokeStyle = clearColor;
+        // ctx.lineWidth = 10;
+        // ctx.strokeRect(shape.x, shape.y, shape.width, shape.height);
+      }
+      ctx.lineWidth = 10;
+      ctx.strokeRect(shape.x, shape.y, shape.width, shape.height);
       // drawing code here
     } else {
       // canvas-unsupported code here
       console.log('Browser does not support HTML Canvas. Sorry');
     }    
+  }
+
+  drawRectangleHighlight = (shape) => {
+
+  }
+
+  clearRectangleHighlight = (shape) => {
+    
   }
 
   drawCircle = (shape) => {
@@ -96,6 +182,20 @@ class App extends React.Component {
     }    
   }
 
+  isMouseOverRectangle = (mouseX, mouseY, shape) => {
+    const xCorrection = -170;
+    mouseX += xCorrection;
+    if (mouseX >= shape.x && mouseY >= shape.y && mouseX <= shape.x + shape.width && mouseY <= shape.y + shape.height) {
+      return true;
+    }
+    return false;
+  }
+
+  isMouseOverCircle = (mouseX, mouseY, shape) => {
+    const xCorrection = -170;
+
+  }
+
   buildCanvas = () => {
     this.state.shapes.forEach(shape => {
       if (shape.type === 'circle') {
@@ -107,24 +207,13 @@ class App extends React.Component {
     })
   }
 
-  // const getShapesAr = () => {
-  //   let shapesAr = [];
-  //   Object.keys(shapes).forEach(k => {
-  //     shapesAr.push(shapes[k]);
-  //   });
-  //   return shapesAr;
-  // }
-
-  // useEffect(() => {
-  //   buildCanvas();
-  // }, [shapes]);
-
   render() {
     return (
       <div>
         <main>
           <Buttons clickHandler={this.clickButtonHandler}></Buttons>
-          <canvas width='500' height='500' id='shape-canvas' ref={this.myRef} />
+          <canvas width='500' height='500' id='shape-canvas' ref={this.myRef} 
+            onMouseMove={this.canvasMouseMoveHandler} onClick={this.canvasClickHandler} />
           <ShapeEditor clickHandler={this.clickButtonHandler}></ShapeEditor>
         </main>
       </div>
