@@ -160,14 +160,11 @@ class App extends React.Component {
       ctx.fill(rectangle);
       if (shape.hasHighlight) {
         ctx.strokeStyle = highlightColor;
-      } else {
+        } else {
         ctx.strokeStyle = clearColor;
-        // ctx.lineWidth = 10;
-        // ctx.strokeRect(shape.x, shape.y, shape.width, shape.height);
       }
       ctx.lineWidth = 10;
       ctx.strokeRect(shape.x, shape.y, shape.width, shape.height);
-      // drawing code here
     } else {
       // canvas-unsupported code here
       console.log('Browser does not support HTML Canvas. Sorry');
