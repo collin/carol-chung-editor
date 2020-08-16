@@ -271,13 +271,14 @@ class App extends React.Component {
   }
 
   render() {
+    const selectedShapes = this.state.shapes.filter(shape => shape.isSelected === true);
     return (
       <div>
         <main>
           <Buttons clickHandler={this.clickButtonHandler}></Buttons>
           <canvas width='500' height='500' id='shape-canvas' ref={this.myRef} 
             onMouseMove={this.canvasMouseMoveHandler} onClick={this.canvasClickHandler} />
-          <ShapeEditor clickHandler={this.clickButtonHandler}></ShapeEditor>
+          <ShapeEditor clickHandler={this.clickButtonHandler} selectedShapes={selectedShapes}></ShapeEditor>
         </main>
       </div>
     ); 

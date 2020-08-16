@@ -3,7 +3,7 @@ import Button from './Button';
 import '../App.css';
 
 function CircleEditor(props) {
-  const {clickHandler} = props;
+  const {clickHandler, shape} = props;
   return (
     <div className="circle-editor-container">
       <div className="row">
@@ -11,21 +11,21 @@ function CircleEditor(props) {
         <p>Circle</p>
       </div>
       <div className="row">
-        <p>Center x:</p>
-        <p>250</p>
+        <p>Center x</p>
+        <p>{shape.x}</p>
       </div>
       <div className="row">
-        <p>Center y:</p>
-        <p>250</p>
+        <p>Center y</p>
+        <p>{shape.y}</p>
       </div>
       <form>
         <div className="row">
           <label htmlFor="radius">Radius</label> 
-          <input type="range" id="radius" name="radius" min="1" max="250" />
+          <input type="range" id="radius" name="radius" min="1" max="250" value={shape.radius} />
         </div>
         <div className="row">
           <label htmlFor="circle-color">Color</label>
-          <input type="color" id="circle-color" name="circle-color" defaultValue="#000000" />
+          <input type="color" id="circle-color" name="circle-color" defaultValue="#000000" value={shape.color} />
         </div>
       </form>
     </div>
@@ -33,7 +33,7 @@ function CircleEditor(props) {
 }
 
 function RectangleEditor(props) {
-  const {clickHandler} = props;
+  const {clickHandler, shape} = props;
   return (
     <div className="rectangle-editor-container">
       <div className="row">
@@ -41,25 +41,25 @@ function RectangleEditor(props) {
         <p>Rectangle</p>
       </div>
       <div className="row">
-        <p>x position:</p>
-        <p>215</p>
+        <p>x position</p>
+        <p>{shape.x}</p>
       </div>
       <div className="row">
         <p>y position:</p>
-        <p>225</p>
+        <p>{shape.y}</p>
       </div>
       <form>
         <div className="row">
           <label htmlFor="width">Width</label> 
-          <input type="range" id="width" name="width" min="1" max="500" />
+          <input type="range" id="width" name="width" min="1" max="500" value={shape.width}/>
         </div>
         <div className="row">
           <label htmlFor="height">Height</label> 
-          <input type="range" id="height" name="height" min="1" max="500" />
+          <input type="range" id="height" name="height" min="1" max="500" value={shape.height}/>
         </div>
         <div className="row">
           <label htmlFor="rect-color">Color</label>
-          <input type="color" id="rect-color" name="rect-color" defaultValue="#000000" />
+          <input type="color" id="rect-color" name="rect-color" defaultValue="#000000" value={shape.color} />
         </div>
       </form>
   </div>
@@ -67,11 +67,20 @@ function RectangleEditor(props) {
 }
 
 function ShapeEditor(props) {
-  const {clickHandler} = props;
+  const {clickHandler, selectedShapes} = props;
   return (
     <div className="editor-container">
-      <CircleEditor clickHandler={clickHandler}/>
-      <RectangleEditor clickHandler={clickHandler}/> 
+      {selectedShapes.map(shape => {
+        if (shape.type === 'rectangle') {
+          return (
+            <RectangleEditor shape={shape}/>
+          )    
+        } else {
+          return (
+            <CircleEditor shape={shape}/>
+          )
+        }
+      })}
     </div>
   );
 }
