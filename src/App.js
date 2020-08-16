@@ -68,7 +68,7 @@ class App extends React.Component {
     }
   }
 
-  canvasClickHandler = (ev) => {
+  //canvasClickHandler = (ev) => {
     // this.state.shapes.forEach(shape => {
     //   let curId = shape.id;
     //   if (shape.hasHighlight) {
@@ -96,7 +96,7 @@ class App extends React.Component {
     //check if there is a hovered shape
       //if yes, remove highlight stroke and draw selected stroke
       //if no, check if anything is selected and deselect those chapes
-  }
+  //}
 
   canvasMouseMoveHandler = (ev) => {
     //TODO, check if the mouse is hovering over an existing shape
@@ -104,6 +104,11 @@ class App extends React.Component {
     //note that canvasX is actually clientX - 170px
     const mouseX = ev.clientX;
     const mouseY = ev.clientY;
+    const movementX = ev.movementX;
+    const movementY = ev.movementY;
+    console.log('ev', ev)
+    console.log('movementx', ev.movementX)
+    console.log('movementy', ev.movementY)
 
       this.state.shapes.forEach(shape => {
         const curId = shape.id;
@@ -116,8 +121,8 @@ class App extends React.Component {
               }
               if (this.state.isMouseDown) {
                 console.log('gets here')
-                shape.x = mouseX + xCorrection;
-                shape.y = mouseY;
+                shape.x += movementX;
+                shape.y += movementY;
               }
               return shape;
             });
@@ -128,10 +133,6 @@ class App extends React.Component {
             let newShapes = this.state.shapes.map(shape => {
               if (shape.id === curId) {
                 shape.hasHighlight = false;
-              }
-              if (this.state.isMouseDown) {
-                shape.x = mouseX + xCorrection;
-                shape.y = mouseY;
               }
               return shape;
             });
@@ -145,9 +146,10 @@ class App extends React.Component {
               if (shape.id === curId) {
                 shape.hasHighlight = true;
               }
-              if (this.state.isMouseDown && shape.isSelected) {
-                shape.x = mouseX + xCorrection;
-                shape.y = mouseY;
+              if (this.state.isMouseDown) {
+                console.log('gets here')
+                shape.x += movementX;
+                shape.y += movementY;
               }
               return shape;
             });
@@ -336,7 +338,7 @@ class App extends React.Component {
         <main>
           <Buttons clickHandler={this.clickButtonHandler}></Buttons>
           <canvas width='500' height='500' id='shape-canvas' ref={this.myRef} 
-            onMouseMove={this.canvasMouseMoveHandler} onClick={this.canvasClickHandler} 
+            onMouseMove={this.canvasMouseMoveHandler}
             onMouseDown={this.mouseDownHandler} onMouseUp={this.mouseUpHandler} />
           <ShapeEditor clickHandler={this.clickButtonHandler} selectedShapes={selectedShapes}></ShapeEditor>
         </main>
