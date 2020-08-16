@@ -51,23 +51,29 @@ class App extends React.Component {
     //TODO handle 4 cases
     //1 add circle, 2 add rect, 3 delete circle, 4 delete rect
     const {value} = ev.target;
+    let id = uuidv4();
     if (value === 'Add Circle') {
-      let newCircle = {...defaultCircle, id: uuidv4()};
+      let newCircle = {...defaultCircle, id, order: this.state.lastShapeOrder};
       this.setState((state, props) => {
-        return {shapes: state.shapes.concat([newCircle])};
+        return { shapesObj: {...state.ShapesObj, [id]: newCircle},
+                  lastShapeOrder: state.lastShapeOrder + 1};
       }, () => {
         this.buildCanvas();
+        console.log('this.state', this.state)
       })
     } else if (value === 'Add Rectangle') {
-      let newRectangle = {...defaultRectangle, id: uuidv4()};
+      let newRectangle = {...defaultRectangle, id, order: this.state.lastShapeOrder};
       this.setState((state, props) => {
-        return {shapes: state.shapes.concat([newRectangle])};
+        return {shapesObj: {...state.ShapesObj, [id]: newRectangle},
+                lastShapeOrder: state.lastShapeOrder + 1};
       }, () => {
         this.buildCanvas();
+        console.log('this.state', this.state)
       })
     }
   }
 
+  //TO REFACTOR for shapesObj
   canvasMouseMoveHandler = (ev) => {
     //TODO, check if the mouse is hovering over an existing shape
       //if yes, draw a highlight stroke around it
@@ -76,101 +82,138 @@ class App extends React.Component {
     const mouseY = ev.clientY;
     const movementX = ev.movementX;
     const movementY = ev.movementY;
+    let orderedShapesAr = this.getOrderedShapesAr();
+    let newShapesObj = {...this.state.shapesObj};
 
-      this.state.shapes.forEach(shape => {
-        const curId = shape.id;
-        const xCorrection = -170;
-        if (shape.type === 'rectangle') {
-          if (this.isMouseOverRectangle(mouseX, mouseY, shape)) {
-            let newShapes = this.state.shapes.map(shape => {
-              if (shape.id === curId) {
-                shape.hasHighlight = true;
+    orderedShapesAr.forEach(shape => {
+      const curId = shape.id;
+      const xCorrection = -170;
+      if (shape.type === 'rectangle') {
+        if (this.isMouseOverRectangle(mouseX, mouseY, shape)) {
+          //set shape.hasHighlight = true
+          newShapesObj = {...newShapesObj, [curId]: {...newShapesObj[curId], hasHighlight: true}};
+
+          if (this.state.isMouseDown) {
+            newShapesObj = {...newShapesObj, 
+              [curId]: {...newShapesObj[curId], 
+                x: newShapesObj[curId]['x'] + movementX,
+                y: newShapesObj[curId]['y'] + movementY
               }
-              //this is issue, want it only for single shape but it is getting applied to all shapes
-              if (this.state.isMouseDown) {
-                console.log('gets here')
-                shape.x += movementX;
-                shape.y += movementY;
-              }
-              return shape;
-            });
-            this.setState({shapes: newShapes}, () => {
-              this.buildCanvas();
-            })
-          } else {
-            let newShapes = this.state.shapes.map(shape => {
-              if (shape.id === curId) {
-                shape.hasHighlight = false;
-              }
-              return shape;
-            });
-            this.setState({shapes: newShapes}, () => {
-              this.buildCanvas();
-            })
+            };
           }
-        } else if (shape.type === 'circle') {
-          if (this.isMouseOverCircle(mouseX, mouseY, shape)) {
-            let newShapes = this.state.shapes.map(shape => {
-              if (shape.id === curId) {
-                shape.hasHighlight = true;
-              }
-              //this is issue, want it only for single shape but it is getting applied to all shapes
-              if (this.state.isMouseDown) {
-                console.log('gets here')
-                shape.x += movementX;
-                shape.y += movementY;
-              }
-              return shape;
-            });
-            this.setState({shapes: newShapes}, () => {
-              this.buildCanvas();
-            })
-  
-          } else {
-          //   //if there is highlight, remove that highlight or replace it with a white highlight
-            let newShapes = this.state.shapes.map(shape => {
-              if (shape.id === curId) {
-                shape.hasHighlight = false;
-              }
-              return shape;
-            });
-            this.setState({shapes: newShapes}, () => {
-              this.buildCanvas();
-            })
-          }
+          // let newShapes = this.state.shapes.map(shape => {
+          //   // if (shape.id === curId) {
+          //   //   shape.hasHighlight = true;
+          //   // }
+          //   //this is issue, want it only for single shape but it is getting applied to all shapes
+          //   // if (this.state.isMouseDown) {
+          //   //   console.log('gets here')
+          //   //   shape.x += movementX;
+          //   //   shape.y += movementY;
+          //   // }
+          //   return shape;
+          // });
+          // this.setState({shapes: newShapes}, () => {
+          //   this.buildCanvas();
+          // })
+        } else {
+          newShapesObj = {...newShapesObj, [curId]: {...newShapesObj[curId], hasHighlight: false}};
+          // let newShapes = this.state.shapes.map(shape => {
+          //   if (shape.id === curId) {
+          //     shape.hasHighlight = false;
+          //   }
+          //   return shape;
+          // });
+          // this.setState({shapes: newShapes}, () => {
+          //   this.buildCanvas();
+          // })
         }
-      })
-
-  }
-
-  mouseDownHandler = (ev) => {
-    this.state.shapes.forEach(shape => {
-      let curId = shape.id;
-      if (shape.hasHighlight) {
-        let newShapes = this.state.shapes.map(shape => {
-          if (shape.id === curId) {
-            shape.isSelected = true;
+      } else if (shape.type === 'circle') {
+        if (this.isMouseOverCircle(mouseX, mouseY, shape)) {
+          //set highlight true
+          newShapesObj = {...newShapesObj, [curId]: {...newShapesObj[curId], hasHighlight: true}};
+          //move shape
+          if (this.state.isMouseDown) {
+            newShapesObj = {...newShapesObj, 
+              [curId]: {...newShapesObj[curId], 
+                x: newShapesObj[curId]['x'] + movementX,
+                y: newShapesObj[curId]['y'] + movementY
+              }
+            };
           }
-          return shape;
-        });
-        this.setState({shapes: newShapes}, () => {
-          this.buildCanvas();
-        })
-      } else {
-        let newShapes = this.state.shapes.map(shape => {
-          if (shape.id === curId) {
-            shape.isSelected = false;
-          }
-          return shape;
-        });
-        this.setState({shapes: newShapes}, () => {
-          this.buildCanvas();
-        })
+          // let newShapes = this.state.shapes.map(shape => {
+          //   if (shape.id === curId) {
+          //     shape.hasHighlight = true;
+          //   }
+          //   //this is issue, want it only for single shape but it is getting applied to all shapes
+          //   if (this.state.isMouseDown) {
+          //     console.log('gets here')
+          //     shape.x += movementX;
+          //     shape.y += movementY;
+          //   }
+          //   return shape;
+          // });
+          // this.setState({shapes: newShapes}, () => {
+          //   this.buildCanvas();
+          // })
+
+        } else {
+          //set highlight false
+          newShapesObj = {...newShapesObj, [curId]: {...newShapesObj[curId], hasHighlight: false}};
+        //   //if there is highlight, remove that highlight or replace it with a white highlight
+          // let newShapes = this.state.shapes.map(shape => {
+          //   if (shape.id === curId) {
+          //     shape.hasHighlight = false;
+          //   }
+          //   return shape;
+          // });
+          // this.setState({shapes: newShapes}, () => {
+          //   this.buildCanvas();
+          // })
+        }
       }
     })
+    this.setState({shapesObj: newShapesObj});
+  }
 
+  //TO REFACTOR for shapesObj
+  mouseDownHandler = (ev) => {
+    let orderedShapesAr = this.getOrderedShapesAr();
+    let newShapes = {...this.state.shapesObj};
+    orderedShapesAr.forEach(shape => {
+      let curId = shape.id;
+      if (shape.hasHighlight) {
+        newShapes = {...newShapes, [curId]: {...newShapes[curId], isSelected: true}}
+        // let newShapes = this.state.shapes.map(shape => {
+        //   if (shape.id === curId) {
+        //     shape.isSelected = true;
+        //   }
+        //   return shape;
+        // });
+        // this.setState({shapes: newShapes}, () => {
+        //   this.buildCanvas();
+        // })
+      } else {
+        newShapes = {...newShapes, [curId]: {...newShapes[curId], isSelected: false}}
+        // let newShapes = this.state.shapes.map(shape => {
+        //   if (shape.id === curId) {
+        //     shape.isSelected = false;
+        //   }
+        //   return shape;
+        // });
+        // this.setState({shapes: newShapes}, () => {
+        //   this.buildCanvas();
+        // })
+      }
+    })
     if (!this.state.isMouseDown) {
-      this.setState({isMouseDown: true});
+      this.setState({shapes: newShapes, isMouseDown: true}, () => {
+        this.buildCanvas();
+      });
+    } else {
+      this.setState({shapes: newShapes}, () => {
+        this.buildCanvas();
+      })  
     }
   }
 
@@ -283,12 +326,13 @@ class App extends React.Component {
   }
 
   buildCanvas = () => {
+    let orderedShapesAr = this.getOrderedShapesAr();
     let canvas = this.myRef.current;
     if (canvas.getContext) {
       var ctx = canvas.getContext('2d');
       ctx.clearRect(0, 0, 500, 500);
 
-      this.state.shapes.forEach(shape => {
+      orderedShapesAr.forEach(shape => {
         if (shape.type === 'circle') {
           this.drawCircle(shape);
         } else if (shape.type === 'rectangle') {
@@ -300,8 +344,27 @@ class App extends React.Component {
     }
   }
 
+  getOrderedShapesAr = () => {
+    console.log('this.state', this.state)
+    let shapesAr = Object.keys(this.state.shapesObj).map(k => this.state.shapesObj[k]);
+    //sort shapesAr by order
+    shapesAr.sort(function(a, b) {
+      var orderA = a.order;
+      var orderB = b.order;
+      if (orderA < orderB) {
+        return -1;
+      }
+      if (orderA > orderB) {
+        return 1;
+      }
+      return 0;
+    });
+    return shapesAr;
+  }
+
   render() {
-    const selectedShapes = this.state.shapes.filter(shape => shape.isSelected === true);
+    let orderedShapesAr = this.getOrderedShapesAr();
+    const selectedShapes = orderedShapesAr.filter(shape => shape.isSelected === true);
     return (
       <div>
         <main>
