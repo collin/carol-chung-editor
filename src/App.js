@@ -52,24 +52,33 @@ class App extends React.Component {
     //TODO handle 4 cases
     //1 add circle, 2 add rect, 3 delete circle, 4 delete rect
     const {value} = ev.target;
-    let id = uuidv4();
+    let newId = uuidv4();
     if (value === 'Add Circle') {
-      let newCircle = {...defaultCircle, id, order: this.state.lastShapeOrder};
+      let newCircle = {...defaultCircle, id: newId, order: this.state.lastShapeOrder};
       this.setState((state, props) => {
-        return { shapesObj: {...state.shapesObj, [id]: newCircle},
+        return { shapesObj: {...state.shapesObj, [newId]: newCircle},
                   lastShapeOrder: state.lastShapeOrder + 1};
       }, () => {
         this.buildCanvas();
         console.log('this.state', this.state)
       })
     } else if (value === 'Add Rectangle') {
-      let newRectangle = {...defaultRectangle, id, order: this.state.lastShapeOrder};
+      let newRectangle = {...defaultRectangle, id: newId, order: this.state.lastShapeOrder};
       this.setState((state, props) => {
-        return {shapesObj: {...state.shapesObj, [id]: newRectangle},
+        return {shapesObj: {...state.shapesObj, [newId]: newRectangle},
                 lastShapeOrder: state.lastShapeOrder + 1};
       }, () => {
         this.buildCanvas();
       })
+    } else if (value === 'Delete') {
+      let id = ev.target.className;
+      let newShapesObj = {};
+      Object.keys(this.state.shapesObj).forEach(k => {
+        if (k !== id) newShapesObj[k] = this.state.shapesObj[k];
+      })
+      this.setState({shapesObj: newShapesObj}, () => this.buildCanvas());
+    } else {
+      console.log('Click event which is not handled')
     }
   }
 

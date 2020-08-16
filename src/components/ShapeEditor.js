@@ -3,11 +3,11 @@ import Button from './Button';
 import '../App.css';
 
 function CircleEditor(props) {
-  const {clickHandler, shape} = props;
+  const {clickHandler, shape, changeRangeHandler, changeColorHandler} = props;
   return (
     <div className="circle-editor-container">
       <div className="row">
-        <Button label="Delete" clickHandler={clickHandler} value="Delete Circle"/>
+        <Button label="Delete" clickHandler={ev => clickHandler(ev)} value="Delete" shapeId={shape.id}/>
         <p>Circle</p>
       </div>
       <div className="row">
@@ -21,11 +21,13 @@ function CircleEditor(props) {
       <form>
         <div className="row">
           <label htmlFor="radius">Radius</label> 
-          <input type="range" id="radius" name="radius" min="1" max="250" value={shape.radius} className={shape.id}/>
+          <input type="range" id="radius" name="radius" min="1" max="250" value={shape.radius} className={shape.id}
+            onChange={ev => changeRangeHandler(ev)}/>
         </div>
         <div className="row">
           <label htmlFor="color">Color</label>
-          <input type="color" id="circle-color" name="color" value={shape.color} className={shape.id}/>
+          <input type="color" id="circle-color" name="color" value={shape.color} className={shape.id}
+            onChange={ev => changeColorHandler(ev)}/>
         </div>
       </form>
     </div>
@@ -37,7 +39,7 @@ function RectangleEditor(props) {
   return (
     <div className="rectangle-editor-container">
       <div className="row">
-        <Button label="Delete" clickHandler={clickHandler} value="Delete Rectangle"/>
+        <Button label="Delete" clickHandler={(ev) => clickHandler(ev)} value="Delete" shapeId={shape.id}/>
         <p>Rectangle</p>
       </div>
       <div className="row">
@@ -76,11 +78,13 @@ function ShapeEditor(props) {
       {selectedShapes.map(shape => {
         if (shape.type === 'rectangle') {
           return (
-            <RectangleEditor shape={shape} changeRangeHandler={changeRangeHandler} changeColorHandler={changeColorHandler}/>
+            <RectangleEditor shape={shape} changeRangeHandler={changeRangeHandler} changeColorHandler={changeColorHandler}
+              clickHandler={clickHandler}/>
           )    
         } else {
           return (
-            <CircleEditor shape={shape} changeRangeHandler={changeRangeHandler} changeColorHandler={changeColorHandler}/>
+            <CircleEditor shape={shape} changeRangeHandler={changeRangeHandler} changeColorHandler={changeColorHandler}
+              clickHandler={clickHandler}/>
           )
         }
       })}
