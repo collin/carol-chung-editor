@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import './App.css';
 import Buttons from './components/Buttons';
@@ -60,7 +60,6 @@ class App extends React.Component {
                   lastShapeOrder: state.lastShapeOrder + 1};
       }, () => {
         this.buildCanvas();
-        console.log('this.state', this.state)
       })
     } else if (value === 'Add Rectangle') {
       let newRectangle = {...defaultRectangle, id: newId, order: this.state.lastShapeOrder};

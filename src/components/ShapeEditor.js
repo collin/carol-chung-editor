@@ -78,12 +78,12 @@ function ShapeEditor(props) {
       {selectedShapes.map(shape => {
         if (shape.type === 'rectangle') {
           return (
-            <RectangleEditor shape={shape} changeRangeHandler={changeRangeHandler} changeColorHandler={changeColorHandler}
+            <RectangleEditor key={shape.id} shape={shape} changeRangeHandler={changeRangeHandler} changeColorHandler={changeColorHandler}
               clickHandler={clickHandler}/>
           )    
         } else {
           return (
-            <CircleEditor shape={shape} changeRangeHandler={changeRangeHandler} changeColorHandler={changeColorHandler}
+            <CircleEditor key={shape.id} shape={shape} changeRangeHandler={changeRangeHandler} changeColorHandler={changeColorHandler}
               clickHandler={clickHandler}/>
           )
         }
