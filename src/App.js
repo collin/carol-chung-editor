@@ -37,8 +37,11 @@ class App extends React.Component {
     super(props);
     this.state = {
       shapes: [],
-      highlightedShapes: [],
-      selectedShapes: []
+      shapesObj: {},
+      //highlightedShapes: [],
+      //selectedShapes: [],
+      lastShapeOrder: 1,
+      isMouseDown: false,
     };
     this.myRef = React.createRef();
   }
@@ -47,8 +50,6 @@ class App extends React.Component {
   clickButtonHandler = (ev) => {
     //TODO handle 4 cases
     //1 add circle, 2 add rect, 3 delete circle, 4 delete rect
-    console.log('todo click button');
-    console.log('label', ev.target.value)
     const {value} = ev.target;
     if (value === 'Add Circle') {
       let newCircle = {...defaultCircle, id: uuidv4()};
@@ -68,7 +69,110 @@ class App extends React.Component {
   }
 
   canvasClickHandler = (ev) => {
-    console.log('todo canvas click')
+    // this.state.shapes.forEach(shape => {
+    //   let curId = shape.id;
+    //   if (shape.hasHighlight) {
+    //     let newShapes = this.state.shapes.map(shape => {
+    //       if (shape.id === curId) {
+    //         shape.isSelected = true;
+    //       }
+    //       return shape;
+    //     });
+    //     this.setState({shapes: newShapes}, () => {
+    //       this.buildCanvas();
+    //     })
+    //   } else {
+    //     let newShapes = this.state.shapes.map(shape => {
+    //       if (shape.id === curId) {
+    //         shape.isSelected = false;
+    //       }
+    //       return shape;
+    //     });
+    //     this.setState({shapes: newShapes}, () => {
+    //       this.buildCanvas();
+    //     })
+    //   }
+    // })
+    //check if there is a hovered shape
+      //if yes, remove highlight stroke and draw selected stroke
+      //if no, check if anything is selected and deselect those chapes
+  }
+
+  canvasMouseMoveHandler = (ev) => {
+    //TODO, check if the mouse is hovering over an existing shape
+      //if yes, draw a highlight stroke around it
+    //note that canvasX is actually clientX - 170px
+    const mouseX = ev.clientX;
+    const mouseY = ev.clientY;
+
+      this.state.shapes.forEach(shape => {
+        const curId = shape.id;
+        const xCorrection = -170;
+        if (shape.type === 'rectangle') {
+          if (this.isMouseOverRectangle(mouseX, mouseY, shape)) {
+            let newShapes = this.state.shapes.map(shape => {
+              if (shape.id === curId) {
+                shape.hasHighlight = true;
+              }
+              if (this.state.isMouseDown) {
+                console.log('gets here')
+                shape.x = mouseX + xCorrection;
+                shape.y = mouseY;
+              }
+              return shape;
+            });
+            this.setState({shapes: newShapes}, () => {
+              this.buildCanvas();
+            })
+          } else {
+            let newShapes = this.state.shapes.map(shape => {
+              if (shape.id === curId) {
+                shape.hasHighlight = false;
+              }
+              if (this.state.isMouseDown) {
+                shape.x = mouseX + xCorrection;
+                shape.y = mouseY;
+              }
+              return shape;
+            });
+            this.setState({shapes: newShapes}, () => {
+              this.buildCanvas();
+            })
+          }
+        } else if (shape.type === 'circle') {
+          if (this.isMouseOverCircle(mouseX, mouseY, shape)) {
+            let newShapes = this.state.shapes.map(shape => {
+              if (shape.id === curId) {
+                shape.hasHighlight = true;
+              }
+              if (this.state.isMouseDown && shape.isSelected) {
+                shape.x = mouseX + xCorrection;
+                shape.y = mouseY;
+              }
+              return shape;
+            });
+            this.setState({shapes: newShapes}, () => {
+              this.buildCanvas();
+            })
+  
+          } else {
+          //   //if there is highlight, remove that highlight or replace it with a white highlight
+            let newShapes = this.state.shapes.map(shape => {
+              if (shape.id === curId) {
+                shape.hasHighlight = false;
+              }
+              return shape;
+            });
+            this.setState({shapes: newShapes}, () => {
+              this.buildCanvas();
+            })
+          }
+        }
+      })
+
+  }
+
+  mouseDownHandler = (ev) => {
     this.state.shapes.forEach(shape => {
       let curId = shape.id;
       if (shape.hasHighlight) {
@@ -93,68 +197,16 @@ class App extends React.Component {
         })
       }
     })
-    //check if there is a hovered shape
-      //if yes, remove highlight stroke and draw selected stroke
-      //if no, check if anything is selected and deselect those chapes
+
+    if (!this.state.isMouseDown) {
+      this.setState({isMouseDown: true});
+    }
   }
 
-  canvasMouseMoveHandler = (ev) => {
-    //TODO, check if the mouse is hovering over an existing shape
-      //if yes, draw a highlight stroke around it
-    //note that canvasX is actually clientX - 170px
-    const mouseX = ev.clientX;
-    const mouseY = ev.clientY;
-
-    this.state.shapes.forEach(shape => {
-      const curId = shape.id;
-      if (shape.type === 'rectangle') {
-        if (this.isMouseOverRectangle(mouseX, mouseY, shape)) {
-          let newShapes = this.state.shapes.map(shape => {
-            if (shape.id === curId) {
-              shape.hasHighlight = true;
-            }
-            return shape;
-          });
-          this.setState({shapes: newShapes}, () => {
-            this.buildCanvas();
-          })
-        } else {
-          let newShapes = this.state.shapes.map(shape => {
-            if (shape.id === curId) {
-              shape.hasHighlight = false;
-            }
-            return shape;
-          });
-          this.setState({shapes: newShapes}, () => {
-            this.buildCanvas();
-          })
-        }
-      } else if (shape.type === 'circle') {
-        if (this.isMouseOverCircle(mouseX, mouseY, shape)) {
-          let newShapes = this.state.shapes.map(shape => {
-            if (shape.id === curId) {
-              shape.hasHighlight = true;
-            }
-            return shape;
-          });
-          this.setState({shapes: newShapes}, () => {
-            this.buildCanvas();
-          })
-
-        } else {
-        //   //if there is highlight, remove that highlight or replace it with a white highlight
-          let newShapes = this.state.shapes.map(shape => {
-            if (shape.id === curId) {
-              shape.hasHighlight = false;
-            }
-            return shape;
-          });
-          this.setState({shapes: newShapes}, () => {
-            this.buildCanvas();
-          })
-        }
-      }
-    })
+  mouseUpHandler = (ev) => {
+    if (this.state.isMouseDown) {
+      this.setState({isMouseDown: false});
+    }
   }
 
   //id matters for this one
@@ -260,14 +312,21 @@ class App extends React.Component {
   }
 
   buildCanvas = () => {
-    this.state.shapes.forEach(shape => {
-      if (shape.type === 'circle') {
-        this.drawCircle(shape);
-      } else if (shape.type === 'rectangle') {
-        console.log('gets here build')
-        this.drawRectangle(shape);
-      }
-    })
+    let canvas = this.myRef.current;
+    if (canvas.getContext) {
+      var ctx = canvas.getContext('2d');
+      ctx.clearRect(0, 0, 500, 500);
+
+      this.state.shapes.forEach(shape => {
+        if (shape.type === 'circle') {
+          this.drawCircle(shape);
+        } else if (shape.type === 'rectangle') {
+          this.drawRectangle(shape);
+        }
+      })
+    } else {
+      console.log('Browser does not support HTML Canvas.');
+    }
   }
 
   render() {
@@ -277,7 +336,8 @@ class App extends React.Component {
         <main>
           <Buttons clickHandler={this.clickButtonHandler}></Buttons>
           <canvas width='500' height='500' id='shape-canvas' ref={this.myRef} 
-            onMouseMove={this.canvasMouseMoveHandler} onClick={this.canvasClickHandler} />
+            onMouseMove={this.canvasMouseMoveHandler} onClick={this.canvasClickHandler} 
+            onMouseDown={this.mouseDownHandler} onMouseUp={this.mouseUpHandler} />
           <ShapeEditor clickHandler={this.clickButtonHandler} selectedShapes={selectedShapes}></ShapeEditor>
         </main>
       </div>
