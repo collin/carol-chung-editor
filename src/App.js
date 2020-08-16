@@ -55,7 +55,7 @@ class App extends React.Component {
     if (value === 'Add Circle') {
       let newCircle = {...defaultCircle, id, order: this.state.lastShapeOrder};
       this.setState((state, props) => {
-        return { shapesObj: {...state.ShapesObj, [id]: newCircle},
+        return { shapesObj: {...state.shapesObj, [id]: newCircle},
                   lastShapeOrder: state.lastShapeOrder + 1};
       }, () => {
         this.buildCanvas();
@@ -64,7 +64,7 @@ class App extends React.Component {
     } else if (value === 'Add Rectangle') {
       let newRectangle = {...defaultRectangle, id, order: this.state.lastShapeOrder};
       this.setState((state, props) => {
-        return {shapesObj: {...state.ShapesObj, [id]: newRectangle},
+        return {shapesObj: {...state.shapesObj, [id]: newRectangle},
                 lastShapeOrder: state.lastShapeOrder + 1};
       }, () => {
         this.buildCanvas();
@@ -92,6 +92,7 @@ class App extends React.Component {
         if (this.isMouseOverRectangle(mouseX, mouseY, shape)) {
           //set shape.hasHighlight = true
           newShapesObj = {...newShapesObj, [curId]: {...newShapesObj[curId], hasHighlight: true}};
+          console.log('newShapesObj', newShapesObj)
 
           if (this.state.isMouseDown) {
             newShapesObj = {...newShapesObj, 
@@ -101,6 +102,10 @@ class App extends React.Component {
               }
             };
           }
+          // this.setState({shapesObj: newShapesObj}, () => {
+          //   this.buildCanvas();
+          // });
+
           // let newShapes = this.state.shapes.map(shape => {
           //   // if (shape.id === curId) {
           //   //   shape.hasHighlight = true;
@@ -118,6 +123,10 @@ class App extends React.Component {
           // })
         } else {
           newShapesObj = {...newShapesObj, [curId]: {...newShapesObj[curId], hasHighlight: false}};
+          // this.setState({shapesObj: newShapesObj}, () => {
+          //   this.buildCanvas();
+          // });
+
           // let newShapes = this.state.shapes.map(shape => {
           //   if (shape.id === curId) {
           //     shape.hasHighlight = false;
@@ -141,6 +150,10 @@ class App extends React.Component {
               }
             };
           }
+          // this.setState({shapesObj: newShapesObj}, () => {
+          //   this.buildCanvas();
+          // });
+
           // let newShapes = this.state.shapes.map(shape => {
           //   if (shape.id === curId) {
           //     shape.hasHighlight = true;
@@ -160,6 +173,9 @@ class App extends React.Component {
         } else {
           //set highlight false
           newShapesObj = {...newShapesObj, [curId]: {...newShapesObj[curId], hasHighlight: false}};
+          // this.setState({shapesObj: newShapesObj}, () => {
+          //   this.buildCanvas();
+          // });
         //   //if there is highlight, remove that highlight or replace it with a white highlight
           // let newShapes = this.state.shapes.map(shape => {
           //   if (shape.id === curId) {
@@ -170,10 +186,15 @@ class App extends React.Component {
           // this.setState({shapes: newShapes}, () => {
           //   this.buildCanvas();
           // })
+
+
         }
       }
     })
-    this.setState({shapesObj: newShapesObj});
+
+    this.setState({shapesObj: newShapesObj}, () => {
+      this.buildCanvas();
+    });
   }
 
   //TO REFACTOR for shapesObj
@@ -207,11 +228,11 @@ class App extends React.Component {
       }
     })
     if (!this.state.isMouseDown) {
-      this.setState({shapes: newShapes, isMouseDown: true}, () => {
+      this.setState({shapesObj: newShapes, isMouseDown: true}, () => {
         this.buildCanvas();
       });
     } else {
-      this.setState({shapes: newShapes}, () => {
+      this.setState({shapesObj: newShapes}, () => {
         this.buildCanvas();
       })  
     }
@@ -245,6 +266,7 @@ class App extends React.Component {
       ctx.fillStyle = shape.color;
       ctx.fill(rectangle);
       if (shape.hasHighlight) {
+        console.log('gets here')
         ctx.strokeStyle = highlightColor;
       } else {
         ctx.strokeStyle = clearColor;
@@ -345,7 +367,7 @@ class App extends React.Component {
   }
 
   getOrderedShapesAr = () => {
-    console.log('this.state', this.state)
+    //console.log('this.state', this.state)
     let shapesAr = Object.keys(this.state.shapesObj).map(k => this.state.shapesObj[k]);
     //sort shapesAr by order
     shapesAr.sort(function(a, b) {
