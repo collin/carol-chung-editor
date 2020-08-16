@@ -137,28 +137,21 @@ class App extends React.Component {
             }
             return shape;
           });
-          console.log('TODO add circle highlight')
-          //TODO is update drawCircle with conditional highlight
           this.setState({shapes: newShapes}, () => {
             this.buildCanvas();
           })
 
         } else {
         //   //if there is highlight, remove that highlight or replace it with a white highlight
-          console.log('TODO clear circle highlight')
           let newShapes = this.state.shapes.map(shape => {
             if (shape.id === curId) {
               shape.hasHighlight = false;
             }
             return shape;
           });
-          console.log('TODO add circle highlight')
-          //TODO is update drawCircle with conditional highlight
           this.setState({shapes: newShapes}, () => {
             this.buildCanvas();
           })
-
-
         }
       }
     })
@@ -215,21 +208,34 @@ class App extends React.Component {
   }
 
   drawCircle = (shape) => {
+    const highlightWidth = 10;
     let canvas = this.myRef.current;
     if (canvas.getContext) {
       var ctx = canvas.getContext('2d');
+      var ctx2 = canvas.getContext('2d');
       ctx.beginPath();
       ctx.arc(shape.x, shape.y, shape.radius, 0, (2 * Math.PI), 0);
       ctx.fillStyle = shape.color;
       ctx.fill();
       if (shape.hasHighlight) {
-        console.log('gets here')
         ctx.strokeStyle = highlightColor;
       } else {
         ctx.strokeStyle = clearColor;
       }
-      ctx.lineWidth = 10;
+      ctx.lineWidth = highlightWidth;
       ctx.stroke();
+
+      ctx2.beginPath();
+      if (shape.isSelected) {
+        ctx2.strokeStyle = selectColor;
+        ctx2.arc(shape.x, shape.y, shape.radius + highlightWidth, 0, (2 * Math.PI), 0);
+      } else {
+        ctx2.strokeStyle = clearColor;
+        ctx2.arc(shape.x, shape.y, shape.radius + highlightWidth, 0, (2 * Math.PI), 0);
+      }
+      ctx2.lineWidth = 5;
+      ctx2.stroke();
+
     } else {
       // canvas-unsupported code here
     }    
