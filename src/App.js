@@ -68,36 +68,6 @@ class App extends React.Component {
     }
   }
 
-  //canvasClickHandler = (ev) => {
-    // this.state.shapes.forEach(shape => {
-    //   let curId = shape.id;
-    //   if (shape.hasHighlight) {
-    //     let newShapes = this.state.shapes.map(shape => {
-    //       if (shape.id === curId) {
-    //         shape.isSelected = true;
-    //       }
-    //       return shape;
-    //     });
-    //     this.setState({shapes: newShapes}, () => {
-    //       this.buildCanvas();
-    //     })
-    //   } else {
-    //     let newShapes = this.state.shapes.map(shape => {
-    //       if (shape.id === curId) {
-    //         shape.isSelected = false;
-    //       }
-    //       return shape;
-    //     });
-    //     this.setState({shapes: newShapes}, () => {
-    //       this.buildCanvas();
-    //     })
-    //   }
-    // })
-    //check if there is a hovered shape
-      //if yes, remove highlight stroke and draw selected stroke
-      //if no, check if anything is selected and deselect those chapes
-  //}
-
   canvasMouseMoveHandler = (ev) => {
     //TODO, check if the mouse is hovering over an existing shape
       //if yes, draw a highlight stroke around it
@@ -106,9 +76,6 @@ class App extends React.Component {
     const mouseY = ev.clientY;
     const movementX = ev.movementX;
     const movementY = ev.movementY;
-    console.log('ev', ev)
-    console.log('movementx', ev.movementX)
-    console.log('movementy', ev.movementY)
 
       this.state.shapes.forEach(shape => {
         const curId = shape.id;
@@ -119,6 +86,7 @@ class App extends React.Component {
               if (shape.id === curId) {
                 shape.hasHighlight = true;
               }
+              //this is issue, want it only for single shape but it is getting applied to all shapes
               if (this.state.isMouseDown) {
                 console.log('gets here')
                 shape.x += movementX;
@@ -146,6 +114,7 @@ class App extends React.Component {
               if (shape.id === curId) {
                 shape.hasHighlight = true;
               }
+              //this is issue, want it only for single shape but it is getting applied to all shapes
               if (this.state.isMouseDown) {
                 console.log('gets here')
                 shape.x += movementX;
