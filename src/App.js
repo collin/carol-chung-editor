@@ -173,12 +173,43 @@ class App extends React.Component {
 
   //id matters for this one
   changeRangeHandler = (ev) => {
+    let {value, name} = ev.target;
+    let id = ev.target.className;
 
+    console.log('name', name)
+    console.log('value', value)
+
+    this.setState((state, props) => {
+      return {
+        shapesObj: {...state.shapesObj,
+          [id]: {...state.shapesObj[id],
+            [name]: value
+          }
+        }
+      }
+    },
+    () => this.buildCanvas())
   }
 
   //id matters for this one
   changeColorHandler = (ev) => {
+    let {value, name} = ev.target;
+    let id = ev.target.className;
 
+    console.log('id', id)
+    console.log('name', name)
+    console.log('value', value)
+
+    this.setState((state, props) => {
+      return {
+        shapesObj: {...state.shapesObj,
+          [id]: {...state.shapesObj[id],
+            [name]: value
+          }
+        }
+      }
+    },
+    () => this.buildCanvas())
   }
 
   drawRectangle = (shape) => {
@@ -321,7 +352,8 @@ class App extends React.Component {
             onMouseMove={this.canvasMouseMoveHandler}
             onMouseDown={this.mouseDownHandler} onMouseUp={this.mouseUpHandler} 
           />
-          <ShapeEditor clickHandler={this.clickButtonHandler} selectedShapes={selectedShapes} />
+          <ShapeEditor clickHandler={this.clickButtonHandler} selectedShapes={selectedShapes} 
+            changeRangeHandler={this.changeRangeHandler} changeColorHandler={this.changeColorHandler}/>
         </main>
       </div>
     ); 
