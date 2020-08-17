@@ -281,11 +281,11 @@ class App extends React.Component {
       ctx.fill();
       if (shape.hasHighlight) {
         ctx.strokeStyle = highlightColor;
-      } else {
-        ctx.strokeStyle = clearColor;
-      }
-      ctx.lineWidth = highlightWidth;
-      ctx.stroke();
+        ctx.lineWidth = highlightWidth;
+        ctx.stroke();
+      } //else {
+        //ctx.strokeStyle = clearColor;
+      //}
 
       ctx2.beginPath();
       if (shape.isSelected) {
