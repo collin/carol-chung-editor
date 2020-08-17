@@ -108,7 +108,7 @@ class App extends React.Component {
               }
             };
           }
-        } else if (this.state.hasHighlightedShape && shape.hasHighlight) {
+        } else if (shape.hasHighlight) {
           newShapesObj = {...newShapesObj, [curId]: {...newShapesObj[curId], hasHighlight: false}};
         }
       } else if (shape.type === 'circle') {
@@ -224,22 +224,21 @@ class App extends React.Component {
       //draw highlight
       if (shape.hasHighlight) {
         ctx.strokeStyle = highlightColor;
-        ctx.lineWidth = highlightWidth;
-        ctx.strokeRect(shape.x, shape.y, shape.width, shape.height);
-      } //else {
-        //ctx.strokeStyle = clearColor;
-      //}
-      //draw select border
+      } else {
+        ctx.strokeStyle = clearColor;
+      }
+      ctx.lineWidth = highlightWidth;
+      ctx.strokeRect(shape.x, shape.y, shape.width, shape.height);
+    //draw select border
       if (shape.isSelected) {
         ctx.strokeStyle = selectColor;
-        ctx.lineWidth = 5;
-        let selectWidth = shape.width + highlightWidth + 5;
-        let selectHeight = shape.height + highlightWidth + 5;
-        ctx.strokeRect(shape.x - highlightWidth + 2, shape.y - highlightWidth + 2, selectWidth, selectHeight);
-      } //else {
-        //ctx.strokeStyle = clearColor;
-        //ctx.lineWidth = 5;
-      //}
+      } else {
+        ctx.strokeStyle = clearColor;
+      }
+      ctx.lineWidth = 5;
+      let selectWidth = shape.width + highlightWidth + 5;
+      let selectHeight = shape.height + highlightWidth + 5;
+      ctx.strokeRect(shape.x - highlightWidth + 2, shape.y - highlightWidth + 2, selectWidth, selectHeight);
     } else {
       // canvas-unsupported code here
       console.log('Browser does not support HTML Canvas. Sorry');
