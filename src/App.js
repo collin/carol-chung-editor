@@ -149,31 +149,32 @@ class App extends React.Component {
   mouseDownHandler = (ev) => {
     const mouseX = ev.clientX;
     const mouseY = ev.clientY;
-    const xCorrection = -170;
-
     //let orderedShapesAr = this.getOrderedShapesAr();
     let newShapes = {...this.state.shapesObj};
     let selectedShapes = this.getSelectedShapesAr();
 
+    //deselect is buggy
     //deselect selected objects
-    if (selectedShapes.length && this.clickedOutsideAllShapes(mouseX + xCorrection, mouseY, selectedShapes)) {
+    if (!this.state.isShiftPressed && selectedShapes.length && this.clickedOutsideAllShapes(mouseX, mouseY, selectedShapes)) {
       selectedShapes.forEach(shape => {
         let curId = shape.id;
         newShapes = {...newShapes, [curId]: {...newShapes[curId], isSelected: false}}
       })
-    } else {
-      //select objects
-      let shapesAr = this.getOrderedShapesAr();
-      shapesAr.forEach(shape => {
-        let curId = shape.id;
-        if (shape.hasHighlight || (!shape.hasHighlight && this.state.isShiftPressed)) {
-          newShapes = {...newShapes, [curId]: {...newShapes[curId], isSelected: true}}
-        } 
-        if (shape.isSelected) {
-          newShapes = {...newShapes, [curId]: {...newShapes[curId], isSelected: false}}
-        }
-      })
-    }
+    } 
+    //select objects
+    //BUG now this is selecting too many shapes
+    let shapesAr = this.getOrderedShapesAr();
+    shapesAr.forEach(shape => {
+      let curId = shape.id;
+      if (shape.hasHighlight || (this.state.isShiftPressed && ( this.isMouseOverCircle(mouseX, mouseY, shape) || this.isMouseOverRectangle(mouseX, mouseY, shape)))) {
+        newShapes = {...newShapes, [curId]: {...newShapes[curId], isSelected: true}}
+      }
+      //this logic is wrong
+      // if (shape.isSelected) {
+      //   newShapes = {...newShapes, [curId]: {...newShapes[curId], isSelected: false}}
+      // }
+    })
+
     if (!this.state.isMouseDown) {
       this.setState({shapesObj: newShapes, isMouseDown: true}, () => {
         this.buildCanvas();
@@ -391,17 +392,22 @@ class App extends React.Component {
   }
 
   clickedOutsideAllShapes = (x, y, selectedShapesAr) => {
+    console.log('typeof x', typeof x)
+    console.log('typeof y', typeof y)
     for (let i = 0; i < selectedShapesAr.length; i++) {
       if (selectedShapesAr[i].type === 'rectangle') {
         if (this.isMouseOverRectangle(x, y, selectedShapesAr[i])) {
+          console.log('clicked in a shapes')
           return false;
         }
       } else if (selectedShapesAr[i].type === 'circle') {
         if (this.isMouseOverCircle(x, y, selectedShapesAr[i])) {
+          console.log('clicked in a shapes')
           return false;
         }
       }
     }
+    console.log('clicked outside all shapes')
     return true;
   }
 
