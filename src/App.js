@@ -108,9 +108,19 @@ class App extends React.Component {
               }
             };
           }
-        } else if (shape.hasHighlight) {
-          newShapesObj = {...newShapesObj, [curId]: {...newShapesObj[curId], hasHighlight: false}};
-        }
+        } else {
+          if (shape.hasHighlight) {
+            newShapesObj = {...newShapesObj, [curId]: {...newShapesObj[curId], hasHighlight: false}};
+          }
+          if (shape.isSelected && this.state.isMouseDown) {
+            newShapesObj = {...newShapesObj, 
+              [curId]: {...newShapesObj[curId], 
+                x: newShapesObj[curId]['x'] + movementX,
+                y: newShapesObj[curId]['y'] + movementY
+              }
+            };
+          }
+        } 
       } else if (shape.type === 'circle') {
         if (this.isMouseOverCircle(mouseX, mouseY, shape) ) {
           //set highlight true
@@ -124,10 +134,20 @@ class App extends React.Component {
               }
             };
           }
-        } else if ( shape.hasHighlight) { //this.state.hasHighlightedShape &&
-          //set highlight false
-          newShapesObj = {...newShapesObj, [curId]: {...newShapesObj[curId], hasHighlight: false}};
-        }
+        } else {
+          if ( shape.hasHighlight) { //this.state.hasHighlightedShape &&
+            //set highlight false
+            newShapesObj = {...newShapesObj, [curId]: {...newShapesObj[curId], hasHighlight: false}};
+          }
+          if (shape.isSelected && this.state.isMouseDown) {
+            newShapesObj = {...newShapesObj, 
+              [curId]: {...newShapesObj[curId], 
+                x: newShapesObj[curId]['x'] + movementX,
+                y: newShapesObj[curId]['y'] + movementY
+              }
+            };
+          }
+        } 
       }
     })
     this.setState({shapesObj: newShapesObj}, () => {
@@ -136,6 +156,8 @@ class App extends React.Component {
   }
 
   //TO REFACTOR for shapesObj
+  //issue, when click an already selected shape to move, other selected shapes become deselected
+  //need better definition of when to deselect shapes
   mouseDownHandler = (ev) => {
     let orderedShapesAr = this.getOrderedShapesAr();
     let newShapes = {...this.state.shapesObj};
@@ -144,6 +166,8 @@ class App extends React.Component {
       if (shape.hasHighlight || (!shape.hasHighlight && shape.isSelected && this.state.isShiftPressed)) {
         newShapes = {...newShapes, [curId]: {...newShapes[curId], isSelected: true}}
       } else {
+      //think this logic is wrong
+
         newShapes = {...newShapes, [curId]: {...newShapes[curId], isSelected: false}}
       }
     })
@@ -153,7 +177,7 @@ class App extends React.Component {
       });
     } else {
       this.setState({shapesObj: newShapes}, () => {
-        this.buildCanvas();
+       this.buildCanvas();
       })  
     }
   }
