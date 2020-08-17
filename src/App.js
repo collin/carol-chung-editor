@@ -38,11 +38,10 @@ class App extends React.Component {
     this.state = {
       shapes: [],
       shapesObj: {},
-      //highlightedShapes: [],
-      //selectedShapes: [],
       lastShapeOrder: 1,
       isMouseDown: false,
       isShiftPressed: false,
+      hasHighlightedShape: false,
     };
     this.myRef = React.createRef();
   }
@@ -91,15 +90,18 @@ class App extends React.Component {
     const movementX = ev.movementX;
     const movementY = ev.movementY;
     let orderedShapesAr = this.getOrderedShapesAr();
+    let reverseOrderedShapesAr = this.getReverseOrderedShapesAr();
     let newShapesObj = {...this.state.shapesObj};
+    let hasHighlightedShape;
 
-    orderedShapesAr.forEach(shape => {
+    reverseOrderedShapesAr.forEach(shape => {
       const curId = shape.id;
       const xCorrection = -170;
       if (shape.type === 'rectangle') {
-        if (this.isMouseOverRectangle(mouseX, mouseY, shape)) {
+        if (this.isMouseOverRectangle(mouseX, mouseY, shape) ) { //&& !this.state.hasHighlightedShape
           //set shape.hasHighlight = true
           newShapesObj = {...newShapesObj, [curId]: {...newShapesObj[curId], hasHighlight: true}};
+          //hasHighlightedShape = true;
           if (this.state.isMouseDown) {
             newShapesObj = {...newShapesObj, 
               [curId]: {...newShapesObj[curId], 
@@ -108,13 +110,19 @@ class App extends React.Component {
               }
             };
           }
-        } else {
+          //this.setState({hasHighlightedShape: true, shapesObj: newShapesObj}, () => this.buildCanvas())
+        } else if (this.state.hasHighlightedShape && shape.hasHighlight) {
           newShapesObj = {...newShapesObj, [curId]: {...newShapesObj[curId], hasHighlight: false}};
+          //this.setState({hasHighlightedShape: false})          
+          //this.setState({hasHighlightedShape: false, shapesObj: newShapesObj}, () => this.buildCanvas())
+          //hasHighlightedShape = false;
         }
       } else if (shape.type === 'circle') {
-        if (this.isMouseOverCircle(mouseX, mouseY, shape)) {
+        if (this.isMouseOverCircle(mouseX, mouseY, shape) ) { //&& !this.state.hasHighlightedShape
           //set highlight true
           newShapesObj = {...newShapesObj, [curId]: {...newShapesObj[curId], hasHighlight: true}};
+          //hasHighlightedShape = true;
+          //this.setState({hasHighlightedShape: true})
           //move shape
           if (this.state.isMouseDown) {
             newShapesObj = {...newShapesObj, 
@@ -124,11 +132,16 @@ class App extends React.Component {
               }
             };
           }
-        } else {
+          //this.setState({hasHighlightedShape: true, shapesObj: newShapesObj}, () => this.buildCanvas())
+        } else if ( shape.hasHighlight) { //this.state.hasHighlightedShape &&
           //set highlight false
           newShapesObj = {...newShapesObj, [curId]: {...newShapesObj[curId], hasHighlight: false}};
+          //this.setState({hasHighlightedShape: false})
+          //hasHighlightedShape = false;
+          //this.setState({hasHighlightedShape: false, shapesObj: newShapesObj}, () => this.buildCanvas())
         }
       }
+      this.setState({shapesObj: newShapesObj}, () => this.buildCanvas()) //hasHighlightedShape, 
     })
 
     this.setState({shapesObj: newShapesObj}, () => {
@@ -183,15 +196,11 @@ class App extends React.Component {
   changeRangeHandler = (ev) => {
     let {value, name} = ev.target;
     let id = ev.target.className;
-
-    console.log('name', name)
-    console.log('value', value)
-
     this.setState((state, props) => {
       return {
         shapesObj: {...state.shapesObj,
           [id]: {...state.shapesObj[id],
-            [name]: value
+            [name]: parseInt(value, 10)
           }
         }
       }
@@ -203,11 +212,6 @@ class App extends React.Component {
   changeColorHandler = (ev) => {
     let {value, name} = ev.target;
     let id = ev.target.className;
-
-    console.log('id', id)
-    console.log('name', name)
-    console.log('value', value)
-
     this.setState((state, props) => {
       return {
         shapesObj: {...state.shapesObj,
@@ -231,21 +235,25 @@ class App extends React.Component {
       rectangle.rect(shape.x, shape.y, shape.width, shape.height);
       ctx.fillStyle = shape.color;
       ctx.fill(rectangle);
+      //draw highlight
       if (shape.hasHighlight) {
         ctx.strokeStyle = highlightColor;
-      } else {
-        ctx.strokeStyle = clearColor;
-      }
-      ctx.lineWidth = highlightWidth;
-      ctx.strokeRect(shape.x, shape.y, shape.width, shape.height);
+        ctx.lineWidth = highlightWidth;
+        ctx.strokeRect(shape.x, shape.y, shape.width, shape.height);
+      } //else {
+        //ctx.strokeStyle = clearColor;
+      //}
+      //draw select border
       if (shape.isSelected) {
         ctx.strokeStyle = selectColor;
-      } else {
-        ctx.strokeStyle = clearColor;
         ctx.lineWidth = 5;
-      }
-      ctx.lineWidth = 5;
-      ctx.strokeRect(shape.x - highlightWidth + 2, shape.y - highlightWidth + 2, shape.width + highlightWidth + 5, shape.height + highlightWidth + 5);
+        let selectWidth = shape.width + highlightWidth + 5;
+        let selectHeight = shape.height + highlightWidth + 5;
+        ctx.strokeRect(shape.x - highlightWidth + 2, shape.y - highlightWidth + 2, selectWidth, selectHeight);
+      } //else {
+        //ctx.strokeStyle = clearColor;
+        //ctx.lineWidth = 5;
+      //}
     } else {
       // canvas-unsupported code here
       console.log('Browser does not support HTML Canvas. Sorry');
@@ -272,23 +280,22 @@ class App extends React.Component {
       ctx.fill();
       if (shape.hasHighlight) {
         ctx.strokeStyle = highlightColor;
-      } else {
-        ctx.strokeStyle = clearColor;
-      }
-      ctx.lineWidth = highlightWidth;
-      ctx.stroke();
+        ctx.lineWidth = highlightWidth;
+        ctx.stroke();
+      } //else {
+        //ctx.strokeStyle = clearColor;
+      //}
 
       ctx2.beginPath();
       if (shape.isSelected) {
         ctx2.strokeStyle = selectColor;
         ctx2.arc(shape.x, shape.y, shape.radius + highlightWidth, 0, (2 * Math.PI), 0);
-      } else {
-        ctx2.strokeStyle = clearColor;
-        ctx2.arc(shape.x, shape.y, shape.radius + highlightWidth, 0, (2 * Math.PI), 0);
-      }
-      ctx2.lineWidth = 5;
-      ctx2.stroke();
-
+        ctx2.lineWidth = 5;
+        ctx2.stroke();
+      } //else {
+        //ctx2.strokeStyle = clearColor;
+        //ctx2.arc(shape.x, shape.y, shape.radius + highlightWidth, 0, (2 * Math.PI), 0);
+      //}
     } else {
       // canvas-unsupported code here
     }    
@@ -348,6 +355,24 @@ class App extends React.Component {
     });
     return shapesAr;
   }
+
+  getReverseOrderedShapesAr = () => {
+    let shapesAr = Object.keys(this.state.shapesObj).map(k => this.state.shapesObj[k]);
+    //sort shapesAr by reverse order
+    shapesAr.sort(function(a, b) {
+      var orderA = a.order;
+      var orderB = b.order;
+      if (orderA > orderB) {
+        return -1;
+      }
+      if (orderA < orderB) {
+        return 1;
+      }
+      return 0;
+    });
+    return shapesAr;
+  }
+
 
   render() {
     let orderedShapesAr = this.getOrderedShapesAr();
