@@ -4,7 +4,6 @@ import './App.css';
 import Buttons from './components/Buttons';
 import ShapeEditor from './components/ShapeEditor';
 
-//id matters for delete
 const defaultCircle = {
   type: 'circle',
   x: 250,
@@ -14,7 +13,7 @@ const defaultCircle = {
   hasHighlight: false,
   isSelected: false,
 };
-//id matters for delete
+
 const defaultRectangle = {
   type: 'rectangle',
   x: 175,
@@ -48,8 +47,6 @@ class App extends React.Component {
 
   // EVENT HANDLERS
   clickButtonHandler = (ev) => {
-    //TODO handle 4 cases
-    //1 add circle, 2 add rect, 3 delete circle, 4 delete rect
     const {value} = ev.target;
     let newId = uuidv4();
     if (value === 'Add Circle') {
@@ -80,10 +77,7 @@ class App extends React.Component {
     }
   }
 
-  //TO REFACTOR for shapesObj
   canvasMouseMoveHandler = (ev) => {
-    //TODO, check if the mouse is hovering over an existing shape
-      //if yes, draw a highlight stroke around it
     //note that canvasX is actually clientX - 170px
     const mouseX = ev.clientX;
     const mouseY = ev.clientY;
@@ -98,7 +92,6 @@ class App extends React.Component {
       const xCorrection = -170;
       if (shape.type === 'rectangle') {
         if (this.isMouseOverRectangle(mouseX, mouseY, shape) ) {
-          //set shape.hasHighlight = true
           newShapesObj = {...newShapesObj, [curId]: {...newShapesObj[curId], hasHighlight: true}};
           if (this.state.isMouseDown) {
             newShapesObj = {...newShapesObj, 
@@ -123,7 +116,6 @@ class App extends React.Component {
         } 
       } else if (shape.type === 'circle') {
         if (this.isMouseOverCircle(mouseX, mouseY, shape) ) {
-          //set highlight true
           newShapesObj = {...newShapesObj, [curId]: {...newShapesObj[curId], hasHighlight: true}};
           //move shape
           if (this.state.isMouseDown) {
@@ -135,8 +127,7 @@ class App extends React.Component {
             };
           }
         } else {
-          if ( shape.hasHighlight) { //this.state.hasHighlightedShape &&
-            //set highlight false
+          if ( shape.hasHighlight) {
             newShapesObj = {...newShapesObj, [curId]: {...newShapesObj[curId], hasHighlight: false}};
           }
           if (shape.isSelected && this.state.isMouseDown) {
@@ -155,22 +146,28 @@ class App extends React.Component {
     });
   }
 
-  //TO REFACTOR for shapesObj
-  //issue, when click an already selected shape to move, other selected shapes become deselected
-  //need better definition of when to deselect shapes
   mouseDownHandler = (ev) => {
+    const mouseX = ev.clientX;
+    const mouseY = ev.clientY;
+    const xCorrection = -170;
+
     let orderedShapesAr = this.getOrderedShapesAr();
     let newShapes = {...this.state.shapesObj};
+    let selectedShapes = this.getSelectedShapesAr();
+
+    //deselect selected objects
+    if (this.clickedOutsideAllShapes(mouseX + xCorrection, mouseY, selectedShapes)) {
+      selectedShapes.forEach(shape => {
+        let curId = shape.id;
+        newShapes = {...newShapes, [curId]: {...newShapes[curId], isSelected: false}}
+      })
+    }
+    //select objects
     orderedShapesAr.forEach(shape => {
       let curId = shape.id;
       if (shape.hasHighlight || (!shape.hasHighlight && shape.isSelected && this.state.isShiftPressed)) {
         newShapes = {...newShapes, [curId]: {...newShapes[curId], isSelected: true}}
-      } else if (shape.isSelected && !this.state.isShiftPressed) {
-        //BUG
-        //think this logic is wrong, need to add something like where the click happened, isMouseOverRectangle or over circle
-        //need to add condition where user clicked on canvas outside of all selected shapes
-          newShapes = {...newShapes, [curId]: {...newShapes[curId], isSelected: false}}
-      }
+      } 
     })
     if (!this.state.isMouseDown) {
       this.setState({shapesObj: newShapes, isMouseDown: true}, () => {
@@ -189,6 +186,8 @@ class App extends React.Component {
     }
   }
 
+  //think in order to deselect one shape, should define another key handler like Ctrl pressed 
+  //and click selected shape should result in deselect
   keyDownHandler = (ev) => {
     let key = ev.key;
     if (key === 'Shift') {
@@ -270,14 +269,6 @@ class App extends React.Component {
     }    
   }
 
-  drawRectangleHighlight = (shape) => {
-
-  }
-
-  clearRectangleHighlight = (shape) => {
-    
-  }
-
   drawCircle = (shape) => {
     const highlightWidth = 10;
     let canvas = this.myRef.current;
@@ -290,11 +281,11 @@ class App extends React.Component {
       ctx.fill();
       if (shape.hasHighlight) {
         ctx.strokeStyle = highlightColor;
-        ctx.lineWidth = highlightWidth;
-        ctx.stroke();
-      } //else {
-        //ctx.strokeStyle = clearColor;
-      //}
+      } else {
+        ctx.strokeStyle = clearColor;
+      }
+      ctx.lineWidth = highlightWidth;
+      ctx.stroke();
 
       ctx2.beginPath();
       if (shape.isSelected) {
@@ -308,25 +299,8 @@ class App extends React.Component {
       //}
     } else {
       // canvas-unsupported code here
+      console.log('')
     }    
-  }
-
-  isMouseOverRectangle = (mouseX, mouseY, shape) => {
-    const xCorrection = -170;
-    mouseX += xCorrection;
-    if (mouseX >= shape.x && mouseY >= shape.y && mouseX <= shape.x + shape.width && mouseY <= shape.y + shape.height) {
-      return true;
-    }
-    return false;
-  }
-
-  isMouseOverCircle = (mouseX, mouseY, shape) => {
-    const xCorrection = -170;
-    mouseX += xCorrection;
-    if (mouseX >= shape.x - shape.radius && mouseX <= shape.x + shape.radius && mouseY >= shape.y - shape.radius && mouseY <=shape.y + shape.radius) {
-      return true;
-    }
-    return false;
   }
 
   buildCanvas = () => {
@@ -348,8 +322,26 @@ class App extends React.Component {
     }
   }
 
+  //HELPERS
+  isMouseOverRectangle = (mouseX, mouseY, shape) => {
+    const xCorrection = -170;
+    mouseX += xCorrection;
+    if (mouseX >= shape.x && mouseY >= shape.y && mouseX <= shape.x + shape.width && mouseY <= shape.y + shape.height) {
+      return true;
+    }
+    return false;
+  }
+
+  isMouseOverCircle = (mouseX, mouseY, shape) => {
+    const xCorrection = -170;
+    mouseX += xCorrection;
+    if (mouseX >= shape.x - shape.radius && mouseX <= shape.x + shape.radius && mouseY >= shape.y - shape.radius && mouseY <=shape.y + shape.radius) {
+      return true;
+    }
+    return false;
+  }
+
   getOrderedShapesAr = () => {
-    //console.log('this.state', this.state)
     let shapesAr = Object.keys(this.state.shapesObj).map(k => this.state.shapesObj[k]);
     //sort shapesAr by order
     shapesAr.sort(function(a, b) {
@@ -383,6 +375,30 @@ class App extends React.Component {
     return shapesAr;
   }
 
+  getSelectedShapesAr = () => {
+    let selectedShapesAr = [];
+    Object.keys(this.state.shapesObj).forEach(k => {
+      if (this.state.shapesObj[k].isSelected) {
+        selectedShapesAr.push(this.state.shapesObj[k]);
+      }
+    })
+    return selectedShapesAr;
+  }
+
+  clickedOutsideAllShapes = (x, y, selectedShapesAr) => {
+    for (let i = 0; i < selectedShapesAr.length; i++) {
+      if (selectedShapesAr[i].type === 'rectangle') {
+        if (this.isMouseOverRectangle(x, y, selectedShapesAr[i])) {
+          return false;
+        }
+      } else if (selectedShapesAr[i].type === 'circle') {
+        if (this.isMouseOverCircle(x, y, selectedShapesAr[i])) {
+          return false;
+        }
+      }
+    }
+    return true;
+  }
 
   render() {
     let orderedShapesAr = this.getOrderedShapesAr();
