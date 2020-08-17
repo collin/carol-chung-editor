@@ -117,7 +117,6 @@ class App extends React.Component {
       } else if (shape.type === 'circle') {
         if (this.isMouseOverCircle(mouseX, mouseY, shape) ) {
           newShapesObj = {...newShapesObj, [curId]: {...newShapesObj[curId], hasHighlight: true}};
-          //move shape
           if (this.state.isMouseDown) {
             newShapesObj = {...newShapesObj, 
               [curId]: {...newShapesObj[curId], 
@@ -149,12 +148,10 @@ class App extends React.Component {
   mouseDownHandler = (ev) => {
     const mouseX = ev.clientX;
     const mouseY = ev.clientY;
-    //let orderedShapesAr = this.getOrderedShapesAr();
     let newShapes = {...this.state.shapesObj};
     let selectedShapes = this.getSelectedShapesAr();
 
-    //deselect is buggy
-    //deselect selected objects
+    //deselect objects
     if (!this.state.isShiftPressed && selectedShapes.length && this.clickedOutsideAllShapes(mouseX, mouseY, selectedShapes)) {
       selectedShapes.forEach(shape => {
         let curId = shape.id;
@@ -162,19 +159,13 @@ class App extends React.Component {
       })
     } 
     //select objects
-    //BUG now this is selecting too many shapes
     let shapesAr = this.getOrderedShapesAr();
     shapesAr.forEach(shape => {
       let curId = shape.id;
       if (shape.hasHighlight || (this.state.isShiftPressed && ( this.isMouseOverCircle(mouseX, mouseY, shape) || this.isMouseOverRectangle(mouseX, mouseY, shape)))) {
         newShapes = {...newShapes, [curId]: {...newShapes[curId], isSelected: true}}
       }
-      //this logic is wrong
-      // if (shape.isSelected) {
-      //   newShapes = {...newShapes, [curId]: {...newShapes[curId], isSelected: false}}
-      // }
     })
-
     if (!this.state.isMouseDown) {
       this.setState({shapesObj: newShapes, isMouseDown: true}, () => {
         this.buildCanvas();
@@ -259,7 +250,7 @@ class App extends React.Component {
       }
       ctx.lineWidth = highlightWidth;
       ctx.strokeRect(shape.x, shape.y, shape.width, shape.height);
-    //draw select border
+      //draw select border
       if (shape.isSelected) {
         ctx.strokeStyle = selectColor;
       } else {
@@ -289,20 +280,15 @@ class App extends React.Component {
         ctx.strokeStyle = highlightColor;
         ctx.lineWidth = highlightWidth;
         ctx.stroke();
-      } //else {
-        //ctx.strokeStyle = clearColor;
-      //}
-
+      }
+      //draw select border
       ctx2.beginPath();
       if (shape.isSelected) {
         ctx2.strokeStyle = selectColor;
         ctx2.arc(shape.x, shape.y, shape.radius + highlightWidth, 0, (2 * Math.PI), 0);
         ctx2.lineWidth = 5;
         ctx2.stroke();
-      } //else {
-        //ctx2.strokeStyle = clearColor;
-        //ctx2.arc(shape.x, shape.y, shape.radius + highlightWidth, 0, (2 * Math.PI), 0);
-      //}
+      }
     } else {
       // canvas-unsupported code here
       console.log('')
@@ -349,7 +335,7 @@ class App extends React.Component {
 
   getOrderedShapesAr = () => {
     let shapesAr = Object.keys(this.state.shapesObj).map(k => this.state.shapesObj[k]);
-    //sort shapesAr by order
+    //sort shapesAr by order; source from mdn array.sort
     shapesAr.sort(function(a, b) {
       var orderA = a.order;
       var orderB = b.order;
@@ -366,7 +352,7 @@ class App extends React.Component {
 
   getReverseOrderedShapesAr = () => {
     let shapesAr = Object.keys(this.state.shapesObj).map(k => this.state.shapesObj[k]);
-    //sort shapesAr by reverse order
+    //sort shapesAr by reverse order; source from mdn array.sort
     shapesAr.sort(function(a, b) {
       var orderA = a.order;
       var orderB = b.order;
@@ -392,22 +378,17 @@ class App extends React.Component {
   }
 
   clickedOutsideAllShapes = (x, y, selectedShapesAr) => {
-    console.log('typeof x', typeof x)
-    console.log('typeof y', typeof y)
     for (let i = 0; i < selectedShapesAr.length; i++) {
       if (selectedShapesAr[i].type === 'rectangle') {
         if (this.isMouseOverRectangle(x, y, selectedShapesAr[i])) {
-          console.log('clicked in a shapes')
           return false;
         }
       } else if (selectedShapesAr[i].type === 'circle') {
         if (this.isMouseOverCircle(x, y, selectedShapesAr[i])) {
-          console.log('clicked in a shapes')
           return false;
         }
       }
     }
-    console.log('clicked outside all shapes')
     return true;
   }
 
