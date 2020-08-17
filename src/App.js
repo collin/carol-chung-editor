@@ -163,12 +163,13 @@ class App extends React.Component {
     let newShapes = {...this.state.shapesObj};
     orderedShapesAr.forEach(shape => {
       let curId = shape.id;
-      if (shape.hasHighlight || (!shape.hasHighlight && shape.isSelected && this.state.isShiftPressed)) {
+      if (shape.isSelected && !this.state.isShiftPressed) {
+        //need to add condition where user clicked on canvas outside of all selected shapes
+        //think this logic is wrong
+  
+          newShapes = {...newShapes, [curId]: {...newShapes[curId], isSelected: false}}
+      } else if (shape.hasHighlight || (!shape.hasHighlight && shape.isSelected && this.state.isShiftPressed)) {
         newShapes = {...newShapes, [curId]: {...newShapes[curId], isSelected: true}}
-      } else {
-      //think this logic is wrong
-
-        newShapes = {...newShapes, [curId]: {...newShapes[curId], isSelected: false}}
       }
     })
     if (!this.state.isMouseDown) {
