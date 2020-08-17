@@ -151,24 +151,29 @@ class App extends React.Component {
     const mouseY = ev.clientY;
     const xCorrection = -170;
 
-    let orderedShapesAr = this.getOrderedShapesAr();
+    //let orderedShapesAr = this.getOrderedShapesAr();
     let newShapes = {...this.state.shapesObj};
     let selectedShapes = this.getSelectedShapesAr();
 
     //deselect selected objects
-    if (this.clickedOutsideAllShapes(mouseX + xCorrection, mouseY, selectedShapes)) {
+    if (selectedShapes.length && this.clickedOutsideAllShapes(mouseX + xCorrection, mouseY, selectedShapes)) {
       selectedShapes.forEach(shape => {
         let curId = shape.id;
         newShapes = {...newShapes, [curId]: {...newShapes[curId], isSelected: false}}
       })
+    } else {
+      //select objects
+      let shapesAr = this.getOrderedShapesAr();
+      shapesAr.forEach(shape => {
+        let curId = shape.id;
+        if (shape.hasHighlight || (!shape.hasHighlight && this.state.isShiftPressed)) {
+          newShapes = {...newShapes, [curId]: {...newShapes[curId], isSelected: true}}
+        } 
+        if (shape.isSelected) {
+          newShapes = {...newShapes, [curId]: {...newShapes[curId], isSelected: false}}
+        }
+      })
     }
-    //select objects
-    orderedShapesAr.forEach(shape => {
-      let curId = shape.id;
-      if (shape.hasHighlight || (!shape.hasHighlight && shape.isSelected && this.state.isShiftPressed)) {
-        newShapes = {...newShapes, [curId]: {...newShapes[curId], isSelected: true}}
-      } 
-    })
     if (!this.state.isMouseDown) {
       this.setState({shapesObj: newShapes, isMouseDown: true}, () => {
         this.buildCanvas();
