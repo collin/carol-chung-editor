@@ -57,6 +57,21 @@ A few items are not working correctly:
 
   * When the button is clicked, the handler should get a data url using the method from https://developer.mozilla.org/en-US/docs/Web/API/HTMLCanvasElement/toDataURL . The resulting data url should be stored (in app or localStorage) with description for retrieval.
 
+### Part 3 Code decisions
+
+**App State**
+
+* Debated whether to use React vs vanilla JavaScript. Vanilla JS would have worked fine too for this scope but I thought since Angular was in use maybe React would be interesting for comparison.
+
+* Decided to store the state of which shapes should display on the canvas as an object for faster editing.
+
+* I separated a lot of logic for rendering square vs rendering circle. It would have been possible to create one draw function with conditions for what to draw for which shape but I felt like it was more organized to keep that separate.
+
+* Similarly I separated logic for handling events into two sections, like handle mouse movement for rectangle vs handle mouse movement for circle.
+
+* Also for the Shape editor section, I defined two subcomponents for the Circle properties editor vs Rectangle properties editor. Although there was some overlap in properties, it seemed a little clearer to separate the property editors.
+
+* Other decisions were included in the caveats section.
 
 ## Using the App
 
