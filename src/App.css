@@ -2,11 +2,9 @@
   box-sizing: border-box;
 }
 
-main {
-  /* margin: 24px; */
-  /* display: flex;
-  flex-flow: row wrap;
-  justify-content: center; */
+/* workaround related to setting auto-focus on App outter div*/
+.body-container:focus {
+  outline: 0;
 }
 
 canvas {
@@ -27,9 +25,8 @@ canvas {
 .editor-container {
   float: right; 
   padding: 0 12px;
+  /* hard coded height because otherwise the canvas was stretching vertically */ 
   height: 500px;
-  /* display: flex;
-  flex-flow: column wrap; */
   overflow-y: auto;
 }
 
