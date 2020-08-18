@@ -24,6 +24,8 @@ A few items are not working correctly:
 
 4 It would be better to add a key press requirement to deselect a currently selected shape. For ex, you need to press Ctrl and click on a selected shape in order to deselect it. This seems more functional but I ran out of time to implement it.
 
+* Currently the max height of the Shape Editor section is hard-coded to 500px. Otherwise the canvas was getting stretched out vertically resulting in shape height distortions. When more than 2 shapes are selected, you need to scroll down to view all the property editors.
+
 * Also I ran out of time to refactor the code. I tried to clean up basic console statements and comments but there are sections where the code could be more DRY.
 
 
