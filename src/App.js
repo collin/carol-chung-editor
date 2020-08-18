@@ -396,7 +396,6 @@ class App extends React.Component {
     let orderedShapesAr = this.getOrderedShapesAr();
     const selectedShapes = orderedShapesAr.filter(shape => shape.isSelected === true);
     //tabIndex was required to trigger key press event recognition
-    //onKeyPress={this.keyDownHandler}
     return (
       <div tabIndex="-1" onKeyDown={this.keyDownHandler} onKeyUp={this.keyUpHandler} className='body-container'>
         <main>

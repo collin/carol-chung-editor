@@ -1,5 +1,7 @@
 ## Toy Editor (Canvas)
 
+The purpose of the editor is to allow drawing shapes using HTML canvas and modifying shape properties from the editor.
+
 ## About the App
 
 **Dependencies**
@@ -10,9 +12,9 @@
 
 A few items are not working correctly:
 
-* Currently multiple shapes can be highlighted simultaneously. Initially I designed the feature this way and then saw in the specs it should be changed. I ran out of time.
+* Currently multiple shapes can be highlighted simultaneously. Initially I designed the feature this way and then saw in the specs it should be changed. I ran out of time to fix this.
 
-* Currently only way to deselect shapes is to click outside of any shapes. The requirement to click a selected shape to deselect it is not implemented. Initially I forgot about the click to deselect requirement but when I implemented it and started to test the feature, it felt weird. Such as in this use case: 
+* Currently the only way to deselect shapes is to click outside of any shapes. The requirement to click a selected shape to deselect it is not implemented. Initially I forgot about the click to deselect requirement but when I implemented it and started to test the feature, it felt weird. Such as in this use case: 
 
 1 Select multiple shapes. 
 
