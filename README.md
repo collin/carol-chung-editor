@@ -1,3 +1,77 @@
+## Toy Editor (Canvas)
+
+## About the App
+
+**Dependencies**
+
+* Create React App, uuid, node v14+
+
+**Caveats**
+
+A few items are not working correctly:
+
+* Currently multiple shapes can be highlighted simultaneously. Initially I designed the feature this way and then saw in the specs it should be changed. I ran out of time.
+
+* Currently only way to deselect shapes is to click outside of any shapes. The requirement to click a selected shape to deselect it is not implemented. Initially I forgot about the click to deselect requirement but when I implemented it and started to test the feature, it felt weird. Such as in this use case: 
+
+1 Select multiple shapes. 
+
+2 Then click on a selected shape to drag the group. 
+
+3 The shape is getting deselected when that was not the intention.
+
+4 It would be better to add a key press requirement to deselect a currently selected shape. For ex, you need to press Ctrl and click on a selected shape in order to deselect it. This seems more functional but I ran out of time to implement it.
+
+* Also I ran out of time to refactor the code. I tried to clean up basic console statements and comments but there are sections where the code could be more DRY.
+
+
+### Part 2 Requirements
+
+**Write out a short plan for what you would need to change / add to your program to support the following features**
+
+* localStorage based persistence
+
+  * In the UI, this should require a button, 'Save Snapshot' because there is no current control for capturing the x and y positions of the shapes.
+
+  * In localStorage, the history could be saved as an array of the shapesObj data. There should be a limited number of snapshots that can be saved, like 10-15.
+
+  * When the button is clicked, the current shapesObj (state) data should be appended to the localStorage array, shapesHistory.
+
+* undo/redo
+
+  * In the UI, this should require two buttons, 'Undo' and 'Redo'. 
+
+  * In the app state, this should require tracking the current index of state history (`historyIndex`) which is being rendered. The default should be the last index of the shapesHistory array from localStorage.
+
+  * Clicking the 'Undo' button should result in decrementing the `historyIndex` value from state, getting the shape object from localStorage (`shapesHistory`) at the index from historyIndex and replacing the `shapesObj` with the new shape object from localStorage.
+
+  * Clicking the 'Redo' button should result in incrementing the `historyIndex` value from state, getting the shape object from localStorage (`shapesHistory`) at the index from historyIndex and replacing the `shapesObj` with the new shape object from localStorage.
+
+* save to image
+
+  * In the UI, this should require a button, 'Save to image'.
+
+  * When the button is clicked, the handler should get a data url using the method from https://developer.mozilla.org/en-US/docs/Web/API/HTMLCanvasElement/toDataURL . The resulting data url should be stored (in app or localStorage) with description for retrieval.
+
+
+## Using the App
+
+### To install files
+
+Clone the repo.
+
+From the root folder of the repo, run the install command.
+
+`npm install`
+
+### To run the app
+
+From the root folder of the repo, run the start command.
+
+`npm start`
+
+------
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts
@@ -6,63 +80,4 @@ In the project directory, you can run:
 
 ### `npm start`
 
-Runs the app in the development mode.<br />
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
 
-The page will reload if you make edits.<br />
-You will also see any lint errors in the console.
-
-### `npm test`
-
-Launches the test runner in the interactive watch mode.<br />
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
-### `npm run build`
-
-Builds the app for production to the `build` folder.<br />
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.<br />
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/code-splitting
-
-### Analyzing the Bundle Size
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size
-
-### Making a Progressive Web App
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app
-
-### Advanced Configuration
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/advanced-configuration
-
-### Deployment
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/deployment
-
-### `npm run build` fails to minify
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
