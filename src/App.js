@@ -35,12 +35,10 @@ class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      shapes: [],
       shapesObj: {},
       lastShapeOrder: 1,
       isMouseDown: false,
       isShiftPressed: false,
-      hasHighlightedShape: false,
     };
     this.myRef = React.createRef();
   }
@@ -50,6 +48,7 @@ class App extends React.Component {
     const {value} = ev.target;
     let newId = uuidv4();
     if (value === 'Add Circle') {
+      //order property is used to draw shapes in order they were added in case of overlap
       let newCircle = {...defaultCircle, id: newId, order: this.state.lastShapeOrder};
       this.setState((state, props) => {
         return { shapesObj: {...state.shapesObj, [newId]: newCircle},
