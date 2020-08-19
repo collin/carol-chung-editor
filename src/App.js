@@ -39,6 +39,7 @@ class App extends React.Component {
       lastShapeOrder: 1,
       isMouseDown: false,
       isShiftPressed: false,
+      hasHighlightedShape: false,
     };
     this.myRef = React.createRef();
   }
@@ -85,13 +86,17 @@ class App extends React.Component {
     let orderedShapesAr = this.getOrderedShapesAr();
     let reverseOrderedShapesAr = this.getReverseOrderedShapesAr();
     let newShapesObj = {...this.state.shapesObj};
+    let hasHighlight = false;
 
     reverseOrderedShapesAr.forEach(shape => {
       const curId = shape.id;
       const xCorrection = -170;
       if (shape.type === 'rectangle') {
         if (this.isMouseOverRectangle(mouseX, mouseY, shape) ) {
-          newShapesObj = {...newShapesObj, [curId]: {...newShapesObj[curId], hasHighlight: true}};
+          if ((shape.hasHighlight === false && !this.state.hasHighlightedShape && !hasHighlight) || shape.hasHighlight) {
+            newShapesObj = {...newShapesObj, [curId]: {...newShapesObj[curId], hasHighlight: true}};
+            hasHighlight = true;
+          }
           if (this.state.isMouseDown) {
             newShapesObj = {...newShapesObj, 
               [curId]: {...newShapesObj[curId], 
@@ -115,14 +120,17 @@ class App extends React.Component {
         } 
       } else if (shape.type === 'circle') {
         if (this.isMouseOverCircle(mouseX, mouseY, shape) ) {
-          newShapesObj = {...newShapesObj, [curId]: {...newShapesObj[curId], hasHighlight: true}};
+          if ((shape.hasHighlight === false && !this.state.hasHighlightedShape && !hasHighlight) || shape.hasHighlight) {
+            newShapesObj = {...newShapesObj, [curId]: {...newShapesObj[curId], hasHighlight: true}};
+            hasHighlight = true;
+          }
           if (this.state.isMouseDown) {
             newShapesObj = {...newShapesObj, 
               [curId]: {...newShapesObj[curId], 
                 x: newShapesObj[curId]['x'] + movementX,
                 y: newShapesObj[curId]['y'] + movementY
               }
-            };
+            }
           }
         } else {
           if ( shape.hasHighlight) {
@@ -139,7 +147,7 @@ class App extends React.Component {
         } 
       }
     })
-    this.setState({shapesObj: newShapesObj}, () => {
+    this.setState({shapesObj: newShapesObj, hasHighlightedShape: hasHighlight}, () => {
       this.buildCanvas();
     });
   }
