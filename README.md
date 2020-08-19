@@ -12,7 +12,7 @@ The purpose of the editor is to allow drawing shapes using HTML canvas and modif
 
 A few items are not working correctly:
 
-* Currently multiple shapes can be highlighted simultaneously. Initially I designed the feature this way and then saw in the specs it should be changed. I ran out of time to fix this.
+* (fixed - 081920 12:17p PDT) Currently multiple shapes can be highlighted simultaneously. Initially I designed the feature this way and then saw in the specs it should be changed. I ran out of time to fix this.
 
 * Currently the only way to deselect shapes is to click outside of any shapes. The requirement to click a selected shape to deselect it is not implemented. Initially I forgot about the click to deselect requirement but when I implemented it and started to test the feature, it felt weird. Such as in this use case: 
 
