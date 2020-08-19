@@ -40,6 +40,7 @@ class App extends React.Component {
       isMouseDown: false,
       isShiftPressed: false,
       hasHighlightedShape: false,
+      isTabPressed: false,
     };
     this.myRef = React.createRef();
   }
@@ -164,12 +165,19 @@ class App extends React.Component {
         let curId = shape.id;
         newShapes = {...newShapes, [curId]: {...newShapes[curId], isSelected: false}}
       })
-    } 
+    } else if (this.state.isTabPressed) {
+      selectedShapes.forEach(shape => {
+        if (shape.isSelected && (this.isMouseOverRectangle(mouseX, mouseY, shape) || this.isMouseOverCircle(mouseX, mouseY, shape))) {
+          let curId = shape.id;
+          newShapes = {...newShapes, [curId]: {...newShapes[curId], isSelected: false, isTabPressed: false}}  
+        }
+      })
+    }
     //select objects
     let shapesAr = this.getOrderedShapesAr();
     shapesAr.forEach(shape => {
       let curId = shape.id;
-      if (shape.hasHighlight || (this.state.isShiftPressed && ( this.isMouseOverCircle(mouseX, mouseY, shape) || this.isMouseOverRectangle(mouseX, mouseY, shape)))) {
+      if ( !this.state.isTabPressed && (this.isMouseOverCircle(mouseX, mouseY, shape) || this.isMouseOverRectangle(mouseX, mouseY, shape))) {
         newShapes = {...newShapes, [curId]: {...newShapes[curId], isSelected: true}}
       }
     })
@@ -190,12 +198,13 @@ class App extends React.Component {
     }
   }
 
-  //think in order to deselect one shape, should define another key handler like Ctrl pressed 
-  //and click selected shape should result in deselect
   keyDownHandler = (ev) => {
     let key = ev.key;
     if (key === 'Shift') {
       this.setState({isShiftPressed: true});
+    }
+    if (key === 'Tab') {
+      this.setState({isTabPressed: true});
     }
   }
 
@@ -203,6 +212,9 @@ class App extends React.Component {
     let key = ev.key;
     if (key === 'Shift') {
       this.setState({isShiftPressed: false});
+    }
+    if (key === 'Tab') {
+      this.setState({isTabPressed: false});
     }
   }
 

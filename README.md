@@ -12,17 +12,21 @@ The purpose of the editor is to allow drawing shapes using HTML canvas and modif
 
 A few items are not working correctly:
 
-* (fixed - 081920 12:17p PDT) Currently multiple shapes can be highlighted simultaneously. Initially I designed the feature this way and then saw in the specs it should be changed. I ran out of time to fix this.
+* (fixed - 081920 12:17p PDT) Fixed so that only one shape can be highlighted at a time. If shapes are overlaid, the top shape should be highlighted.
 
-* Currently the only way to deselect shapes is to click outside of any shapes. The requirement to click a selected shape to deselect it is not implemented. Initially I forgot about the click to deselect requirement but when I implemented it and started to test the feature, it felt weird. Such as in this use case: 
+   * ~~Currently multiple shapes can be highlighted simultaneously. Initially I designed the feature this way and then saw in the specs it should be changed. I ran out of time to fix this.~~
 
-1 Select multiple shapes. 
+* (fixed - 081920 1:02p PDT) Fixed so that deselecting one selected shape can be done by pressing Tab and then clicking on the shape.
 
-2 Then click on a selected shape to drag the group. 
+   * ~~Currently the only way to deselect shapes is to click outside of any shapes. The requirement to click a selected shape to deselect it is not implemented. Initially I forgot about the click to deselect requirement but when I implemented it and started to test the feature, it felt weird. Such as in this use case:~~
 
-3 The shape is getting deselected when that was not the intention.
+   ~~1 Select multiple shapes.~~ 
 
-4 It would be better to add a key press requirement to deselect a currently selected shape. For ex, you need to press Ctrl and click on a selected shape in order to deselect it. This seems more functional but I ran out of time to implement it.
+   ~~2 Then click on a selected shape to drag the group.~~
+
+   ~~3 The shape is getting deselected when that was not the intention.~~
+
+   ~~4 It would be better to add a key press requirement to deselect a currently selected shape. For ex, you need to press Ctrl and click on a selected shape in order to deselect it. This seems more functional but I ran out of time to implement it.~~
 
 * Currently the max height of the Shape Editor section is hard-coded to 500px. Otherwise the canvas was getting stretched out vertically resulting in shape height distortions. When more than 2 shapes are selected, you need to scroll down to view all the property editors.
 
